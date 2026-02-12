@@ -1,21 +1,21 @@
 # Implementation Plan: CRUD para Usuarios
 
-## Phase 1: Estructura Base y DTOs
+## Phase 1: Estructura Base y DTOs [checkpoint: e451051]
 - [x] Task: Crear DTOs para las operaciones de usuario (CreateUserDto, UpdateUserDto, UserResponseDto)
-    - [ ] Escribir pruebas unitarias para validaci�n de DTOs (si aplica)
+    - [ ] Escribir pruebas unitarias para validación de DTOs (si aplica)
     - [x] Implementar CreateUserDto
     - [x] Implementar UpdateUserDto
     - [x] Implementar UserResponseDto
-- [ ] Task: Conductor - User Manual Verification 'Estructura Base y DTOs' (Protocol in workflow.md)
+- [x] Task: Conductor - User Manual Verification 'Estructura Base y DTOs' (Protocol in workflow.md)
 
 ## Phase 2: Servicio de Usuarios
-- [ ] Task: Implementar UsersService
-    - [ ] Escribir pruebas unitarias para UsersService (Mocks de Prisma)
-    - [ ] Implementar m�todo create (incluyendo hash de contrase�a)
-    - [ ] Implementar m�todo findAll (filtrado por gymId)
-    - [ ] Implementar m�todo findOne
-    - [ ] Implementar m�todo update
-    - [ ] Implementar m�todo remove
+- [x] Task: Implementar UsersService
+    - [x] Escribir pruebas unitarias para UsersService (Mocks de Prisma)
+    - [x] Implementar método create (incluyendo hash de contraseña)
+    - [x] Implementar método findAll (filtrado por gymId)
+    - [x] Implementar método findOne
+    - [x] Implementar método update
+    - [x] Implementar método remove
 - [ ] Task: Conductor - User Manual Verification 'Servicio de Usuarios' (Protocol in workflow.md)
 
 ## Phase 3: Controlador de Usuarios
