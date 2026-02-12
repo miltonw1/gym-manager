@@ -1,0 +1,12 @@
+# Backend node modules
+gym-manager-backend/node_modules/
+
+# Backend env file
+gym-manager-backend/.env
+
+# Logs
+*.log
+
+# OS
+.DS_Store
+Thumbs.db

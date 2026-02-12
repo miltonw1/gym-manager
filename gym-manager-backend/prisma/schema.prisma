@@ -1,0 +1,175 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client"
+  output   = "../generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model Gym {
+  id        Int      @id @default(autoincrement())
+  name      String
+  address   String?
+  phone     String?
+  email     String?
+  createdAt DateTime @default(now())
+
+  users     User[]
+  members   Member[]
+  services  Service[]
+  exercises Exercise[]
+  routines  Routine[]
+
+  @@index([name])
+}
+
+model User {
+  id        Int      @id @default(autoincrement())
+  gymId     Int
+  email     String   @unique
+  createdAt DateTime @default(now())
+
+  gym      Gym       @relation(fields: [gymId], references: [id], onDelete: Cascade)
+  password Password?
+
+  @@index([gymId])
+}
+
+model Password {
+  id     Int    @id @default(autoincrement())
+  hash   String
+  userId Int    @unique
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model Member {
+  id        Int      @id @default(autoincrement())
+  gymId     Int
+  firstName String
+  lastName  String
+  dni       String
+  phone     String?
+  email     String?
+  joinDate  DateTime @default(now())
+  active    Boolean  @default(true)
+
+  gym         Gym            @relation(fields: [gymId], references: [id], onDelete: Cascade)
+  enrollments Enrollment[]
+  routines    MemberRoutine[]
+
+  @@unique([gymId, dni])
+  @@index([gymId, lastName])
+}
+
+model Service {
+  id           Int      @id @default(autoincrement())
+  gymId        Int
+  name         String
+  price        Decimal  @db.Decimal(10, 2)
+  durationDays Int
+  active       Boolean  @default(true)
+  createdAt    DateTime @default(now())
+
+  gym         Gym          @relation(fields: [gymId], references: [id], onDelete: Cascade)
+  enrollments Enrollment[]
+
+  @@index([gymId])
+}
+
+model Enrollment {
+  id        Int               @id @default(autoincrement())
+  memberId  Int
+  serviceId Int
+  startDate DateTime
+  endDate   DateTime
+  status    EnrollmentStatus  @default(ACTIVE)
+  createdAt DateTime          @default(now())
+
+  member   Member   @relation(fields: [memberId], references: [id], onDelete: Cascade)
+  service  Service  @relation(fields: [serviceId], references: [id], onDelete: Cascade)
+  payments Payment[]
+
+  @@index([memberId])
+  @@index([serviceId])
+  @@index([endDate])
+}
+
+model Payment {
+  id           Int      @id @default(autoincrement())
+  enrollmentId Int
+  amount       Decimal  @db.Decimal(10, 2)
+  paidAt       DateTime @default(now())
+
+  enrollment Enrollment @relation(fields: [enrollmentId], references: [id], onDelete: Cascade)
+
+  @@index([paidAt])
+}
+
+
+model Exercise {
+  id          Int      @id @default(autoincrement())
+  gymId       Int
+  name        String
+  createdAt   DateTime @default(now())
+
+  gym      Gym              @relation(fields: [gymId], references: [id], onDelete: Cascade)
+  routines RoutineExercise[]
+
+  @@index([gymId])
+}
+
+model Routine {
+  id        Int      @id @default(autoincrement())
+  gymId     Int
+  name      String
+  notes     String?
+  createdAt DateTime @default(now())
+
+  gym       Gym              @relation(fields: [gymId], references: [id], onDelete: Cascade)
+  exercises RoutineExercise[]
+  members   MemberRoutine[]
+
+  @@index([gymId])
+}
+
+model RoutineExercise {
+  id         Int @id @default(autoincrement())
+  routineId  Int
+  exerciseId Int
+  sets       Int?
+  reps       Int?
+  weight     String?
+  orderIndex Int?
+
+  routine  Routine  @relation(fields: [routineId], references: [id], onDelete: Cascade)
+  exercise Exercise @relation(fields: [exerciseId], references: [id], onDelete: Cascade)
+
+  @@index([routineId])
+  @@index([exerciseId])
+}
+
+model MemberRoutine {
+  id         Int      @id @default(autoincrement())
+  memberId   Int
+  routineId  Int
+  assignedAt DateTime @default(now())
+
+  member  Member  @relation(fields: [memberId], references: [id], onDelete: Cascade)
+  routine Routine @relation(fields: [routineId], references: [id], onDelete: Cascade)
+
+  @@index([memberId])
+  @@index([routineId])
+}
+
+enum EnrollmentStatus {
+  ACTIVE
+  EXPIRED
+  CANCELED
+}
