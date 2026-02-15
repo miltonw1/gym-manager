@@ -15,9 +15,15 @@ datasource db {
 model Gym {
   id        Int      @id @default(autoincrement())
   name      String
-  address   String?
-  phone     String?
-  email     String?
+
+  street    String
+  city      String
+  province  String
+  country   String   @default("Argentina")
+
+  phone     String
+  email     String
+
   createdAt DateTime @default(now())
 
   users     User[]
@@ -27,15 +33,18 @@ model Gym {
   routines  Routine[]
 
   @@index([name])
+  @@index([city])
+  @@index([province])
 }
 
 model User {
   id        Int      @id @default(autoincrement())
-  gymId     Int
+  gymId     Int?
   email     String   @unique
   createdAt DateTime @default(now())
+  role         UserRole @default(STAFF)
 
-  gym      Gym       @relation(fields: [gymId], references: [id], onDelete: Cascade)
+  gym      Gym?       @relation(fields: [gymId], references: [id], onDelete: Cascade)
   password Password?
 
   @@index([gymId])
@@ -75,6 +84,7 @@ model Service {
   durationDays Int
   active       Boolean  @default(true)
   createdAt    DateTime @default(now())
+
 
   gym         Gym          @relation(fields: [gymId], references: [id], onDelete: Cascade)
   enrollments Enrollment[]
@@ -171,4 +181,9 @@ enum EnrollmentStatus {
   ACTIVE
   EXPIRED
   CANCELED
+}
+
+enum UserRole {
+  ADMIN
+  STAFF
 }

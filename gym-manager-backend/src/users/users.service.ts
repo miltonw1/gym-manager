@@ -1,4 +1,6 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
+import { UseGuards } from '@nestjs/common';
+
 import { PrismaService } from '../prisma/prisma.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
@@ -63,12 +65,12 @@ export class UsersService {
 
   async update(id: number, gymId: number, updateUserDto: UpdateUserDto): Promise<UserResponseDto> {
     const { password, ...userData } = updateUserDto;
-    
+
     // Check if user exists first to throw proper error
     await this.findOne(id, gymId);
 
     const updateData: any = { ...userData };
-    
+
     if (password) {
       updateData.password = {
         update: {
