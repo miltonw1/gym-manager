@@ -86,4 +86,25 @@ export class UsersService {
       select: this.userSelect,
     });
   }
+
+  async findByEmail(email: string) {
+    return this.prisma.user.findUnique({
+      where: { email },
+      include: {
+        password: true,
+      },
+    });
+  }
+
+  async validateUser(email: string, pass: string): Promise<any> {
+    const user = await this.findByEmail(email);
+    if (user && user.password) {
+      const isMatch = await bcrypt.compare(pass, user.password.hash);
+      if (isMatch) {
+        const { password, ...result } = user;
+        return result;
+      }
+    }
+    return null;
+  }
 }
