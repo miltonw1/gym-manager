@@ -2,6 +2,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { UsersService } from './users.service';
 import { PrismaService } from '../prisma/prisma.service';
 import * as bcrypt from 'bcrypt';
+import { UserRole } from '@prisma/client';
 
 jest.mock('bcrypt');
 
@@ -19,6 +20,14 @@ describe('UsersService', () => {
     },
   };
 
+  const userSelect = {
+    id: true,
+    email: true,
+    gymId: true,
+    role: true,
+    createdAt: true,
+  };
+
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
@@ -29,6 +38,9 @@ describe('UsersService', () => {
 
     service = module.get<UsersService>(UsersService);
     prisma = module.get<PrismaService>(PrismaService);
+    
+    // Reset mocks
+    jest.clearAllMocks();
   });
 
   it('should be defined', () => {
@@ -50,6 +62,7 @@ describe('UsersService', () => {
         id: 1,
         email: createUserDto.email,
         gymId: createUserDto.gymId,
+        role: UserRole.STAFF,
         createdAt: new Date(),
       });
 
@@ -66,12 +79,7 @@ describe('UsersService', () => {
             },
           },
         },
-        select: {
-          id: true,
-          email: true,
-          gymId: true,
-          createdAt: true,
-        },
+        select: userSelect,
       });
       expect(result).not.toHaveProperty('password');
       expect(result.email).toEqual(createUserDto.email);
@@ -81,8 +89,8 @@ describe('UsersService', () => {
   describe('findAll', () => {
     it('should return an array of users', async () => {
       const users = [
-        { id: 1, email: 'user1@example.com', gymId: 1, createdAt: new Date() },
-        { id: 2, email: 'user2@example.com', gymId: 1, createdAt: new Date() },
+        { id: 1, email: 'user1@example.com', gymId: 1, role: UserRole.STAFF, createdAt: new Date() },
+        { id: 2, email: 'user2@example.com', gymId: 1, role: UserRole.STAFF, createdAt: new Date() },
       ];
       mockPrismaService.user.findMany.mockResolvedValue(users);
 
@@ -90,12 +98,7 @@ describe('UsersService', () => {
 
       expect(prisma.user.findMany).toHaveBeenCalledWith({
         where: { gymId: 1 },
-        select: {
-          id: true,
-          email: true,
-          gymId: true,
-          createdAt: true,
-        },
+        select: userSelect,
       });
       expect(result).toEqual(users);
     });
@@ -103,19 +106,14 @@ describe('UsersService', () => {
 
   describe('findOne', () => {
     it('should return a single user', async () => {
-      const user = { id: 1, email: 'test@example.com', gymId: 1, createdAt: new Date() };
+      const user = { id: 1, email: 'test@example.com', gymId: 1, role: UserRole.STAFF, createdAt: new Date() };
       mockPrismaService.user.findUnique.mockResolvedValue(user);
 
       const result = await service.findOne(1, 1);
 
       expect(prisma.user.findUnique).toHaveBeenCalledWith({
         where: { id: 1, gymId: 1 },
-        select: {
-          id: true,
-          email: true,
-          gymId: true,
-          createdAt: true,
-        },
+        select: userSelect,
       });
       expect(result).toEqual(user);
     });
@@ -129,7 +127,7 @@ describe('UsersService', () => {
 
   describe('update', () => {
     it('should update a user without password', async () => {
-      const user = { id: 1, email: 'old@example.com', gymId: 1, createdAt: new Date() };
+      const user = { id: 1, email: 'old@example.com', gymId: 1, role: UserRole.STAFF, createdAt: new Date() };
       const updateDto = { email: 'new@example.com' };
       
       mockPrismaService.user.findUnique.mockResolvedValue(user);
@@ -140,18 +138,13 @@ describe('UsersService', () => {
       expect(prisma.user.update).toHaveBeenCalledWith({
         where: { id: 1, gymId: 1 },
         data: { email: updateDto.email },
-        select: {
-          id: true,
-          email: true,
-          gymId: true,
-          createdAt: true,
-        },
+        select: userSelect,
       });
       expect(result.email).toEqual(updateDto.email);
     });
 
     it('should update a user with password', async () => {
-      const user = { id: 1, email: 'test@example.com', gymId: 1, createdAt: new Date() };
+      const user = { id: 1, email: 'test@example.com', gymId: 1, role: UserRole.STAFF, createdAt: new Date() };
       const updateDto = { password: 'newpassword' };
       const hashedPassword = 'new_hashed_password';
       
@@ -171,19 +164,14 @@ describe('UsersService', () => {
             },
           },
         },
-        select: {
-          id: true,
-          email: true,
-          gymId: true,
-          createdAt: true,
-        },
+        select: userSelect,
       });
     });
   });
 
   describe('remove', () => {
     it('should delete a user', async () => {
-      const user = { id: 1, email: 'test@example.com', gymId: 1, createdAt: new Date() };
+      const user = { id: 1, email: 'test@example.com', gymId: 1, role: UserRole.STAFF, createdAt: new Date() };
       mockPrismaService.user.findUnique.mockResolvedValue(user);
       mockPrismaService.user.delete.mockResolvedValue(user);
 
@@ -191,12 +179,7 @@ describe('UsersService', () => {
 
       expect(prisma.user.delete).toHaveBeenCalledWith({
         where: { id: 1, gymId: 1 },
-        select: {
-          id: true,
-          email: true,
-          gymId: true,
-          createdAt: true,
-        },
+        select: userSelect,
       });
       expect(result).toEqual(user);
     });

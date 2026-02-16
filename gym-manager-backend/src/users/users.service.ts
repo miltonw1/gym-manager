@@ -1,6 +1,4 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { UseGuards } from '@nestjs/common';
-
 import { PrismaService } from '../prisma/prisma.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
@@ -10,6 +8,14 @@ import * as bcrypt from 'bcrypt';
 @Injectable()
 export class UsersService {
   constructor(private prisma: PrismaService) {}
+
+  private readonly userSelect = {
+    id: true,
+    email: true,
+    gymId: true,
+    role: true,
+    createdAt: true,
+  };
 
   async create(createUserDto: CreateUserDto): Promise<UserResponseDto> {
     const { password, ...userData } = createUserDto;
@@ -24,36 +30,21 @@ export class UsersService {
           },
         },
       },
-      select: {
-        id: true,
-        email: true,
-        gymId: true,
-        createdAt: true,
-      },
+      select: this.userSelect,
     });
   }
 
   async findAll(gymId: number): Promise<UserResponseDto[]> {
     return this.prisma.user.findMany({
       where: { gymId },
-      select: {
-        id: true,
-        email: true,
-        gymId: true,
-        createdAt: true,
-      },
+      select: this.userSelect,
     });
   }
 
   async findOne(id: number, gymId: number): Promise<UserResponseDto> {
     const user = await this.prisma.user.findUnique({
       where: { id, gymId },
-      select: {
-        id: true,
-        email: true,
-        gymId: true,
-        createdAt: true,
-      },
+      select: this.userSelect,
     });
 
     if (!user) {
@@ -82,12 +73,7 @@ export class UsersService {
     return this.prisma.user.update({
       where: { id, gymId },
       data: updateData,
-      select: {
-        id: true,
-        email: true,
-        gymId: true,
-        createdAt: true,
-      },
+      select: this.userSelect,
     });
   }
 
@@ -97,12 +83,7 @@ export class UsersService {
 
     return this.prisma.user.delete({
       where: { id, gymId },
-      select: {
-        id: true,
-        email: true,
-        gymId: true,
-        createdAt: true,
-      },
+      select: this.userSelect,
     });
   }
 }
