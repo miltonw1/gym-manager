@@ -13,9 +13,9 @@
 - [x] Task: Conductor - User Manual Verification 'Controlador de Usuarios'
 
 ## Phase 4: CRUD de Gimnasios y Refactorización de Seguridad
-- [~] Task: Completar GymsService (findAll, findOne, update, remove)
-- [ ] Task: Completar GymsController (GET, PATCH, DELETE)
-- [ ] Task: Implementar Guardián de Admin (RolesGuard)
-- [ ] Task: Implementar creación de usuarios STAFF por el ADMIN en UsersController
-- [ ] Task: Aplicar guardianes a UsersController y GymsController
-- [ ] Task: Conductor - User Manual Verification 'Gimnasios y Seguridad'
+- [x] Task: Completar GymsService (findAll, findOne, update, remove) 2561b91
+- [x] Task: Completar GymsController (GET, PATCH, DELETE) c2b3213
+- [x] Task: Implementar Guardián de Admin (RolesGuard) 4de6561
+- [x] Task: Implementar creación de usuarios STAFF por el ADMIN en UsersController 4de6561
+- [x] Task: Aplicar guardianes a UsersController y GymsController 4de6561
+- [~] Task: Conductor - User Manual Verification 'Gimnasios y Seguridad'
