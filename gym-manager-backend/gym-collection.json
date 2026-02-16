@@ -1,0 +1,171 @@
+{
+    "_type": "export",
+    "__export_format": 4,
+    "__export_date": "2026-02-16T00:00:00.000Z",
+    "__export_source": "insomnia.desktop.app:v2023.5.8",
+    "resources": [
+        {
+            "_id": "wrk_gym_manager",
+            "parentId": null,
+            "modified": 1708041600000,
+            "created": 1708041600000,
+            "name": "Gym Manager API",
+            "description": "API para la gestión de gimnasios y usuarios",
+            "scope": "collection",
+            "_type": "workspace"
+        },
+        {
+            "_id": "env_local",
+            "parentId": "wrk_gym_manager",
+            "modified": 1708041600000,
+            "created": 1708041600000,
+            "name": "Local",
+            "data": {
+                "base_url": "http://localhost:3000",
+                "jwt_token": ""
+            },
+            "dataPropertyOrder": {
+                "&": ["base_url", "jwt_token"]
+            },
+            "color": null,
+            "isPrivate": false,
+            "metaSortKey": 1708041600000,
+            "_type": "environment"
+        },
+        {
+            "_id": "fld_auth",
+            "parentId": "wrk_gym_manager",
+            "modified": 1708041600000,
+            "created": 1708041600000,
+            "name": "Auth",
+            "description": "",
+            "environment": {},
+            "environmentPropertyOrder": null,
+            "metaSortKey": -1708041700000,
+            "_type": "request_group"
+        },
+        {
+            "_id": "req_login",
+            "parentId": "fld_auth",
+            "modified": 1708041600000,
+            "created": 1708041600000,
+            "url": "{{ _.base_url }}/auth/login",
+            "name": "Login",
+            "description": "Inicia sesión para obtener un token de acceso",
+            "method": "POST",
+            "body": {
+                "mimeType": "application/json",
+                "text": "{\n  \"email\": \"admin@gymcentral.com\",\n  \"password\": \"password123\"\n}"
+            },
+            "parameters": [],
+            "headers": [
+                {
+                    "name": "Content-Type",
+                    "value": "application/json"
+                }
+            ],
+            "authentication": {},
+            "metaSortKey": -1708041600000,
+            "isPrivate": false,
+            "settingStoreCookies": true,
+            "settingSendCookies": true,
+            "settingDisableRenderRequestBody": false,
+            "settingEncodeUrl": true,
+            "settingRebuildPath": true,
+            "settingFollowRedirects": "global",
+            "_type": "request"
+        },
+        {
+            "_id": "fld_gyms",
+            "parentId": "wrk_gym_manager",
+            "modified": 1708041600000,
+            "created": 1708041600000,
+            "name": "Gyms",
+            "description": "",
+            "environment": {},
+            "environmentPropertyOrder": null,
+            "metaSortKey": -1708041600000,
+            "_type": "request_group"
+        },
+        {
+            "_id": "req_create_gym",
+            "parentId": "fld_gyms",
+            "modified": 1708041600000,
+            "created": 1708041600000,
+            "url": "{{ _.base_url }}/gyms",
+            "name": "Create Gym",
+            "description": "Crea un nuevo gimnasio en el sistema",
+            "method": "POST",
+            "body": {
+                "mimeType": "application/json",
+                "text": "{\n  \"name\": \"Gym Central\",\n  \"street\": \"Av. Siempre Viva 123\",\n  \"city\": \"Buenos Aires\",\n  \"province\": \"CABA\",\n  \"country\": \"Argentina\",\n  \"phone\": \"1122334455\",\n  \"email\": \"contacto@gymcentral.com\"\n}"
+            },
+            "parameters": [],
+            "headers": [
+                {
+                    "name": "Content-Type",
+                    "value": "application/json"
+                }
+            ],
+            "authentication": {
+                "type": "bearer",
+                "token": "{{ _.jwt_token }}"
+            },
+            "metaSortKey": -1708041600000,
+            "isPrivate": false,
+            "settingStoreCookies": true,
+            "settingSendCookies": true,
+            "settingDisableRenderRequestBody": false,
+            "settingEncodeUrl": true,
+            "settingRebuildPath": true,
+            "settingFollowRedirects": "global",
+            "_type": "request"
+        },
+        {
+            "_id": "fld_users",
+            "parentId": "wrk_gym_manager",
+            "modified": 1708041600000,
+            "created": 1708041600000,
+            "name": "Users",
+            "description": "",
+            "environment": {},
+            "environmentPropertyOrder": null,
+            "metaSortKey": -1708041500000,
+            "_type": "request_group"
+        },
+        {
+            "_id": "req_create_user",
+            "parentId": "fld_users",
+            "modified": 1708041600000,
+            "created": 1708041600000,
+            "url": "{{ _.base_url }}/users",
+            "name": "Create User",
+            "description": "Crea un nuevo usuario (ADMIN o STAFF) asociado a un gimnasio",
+            "method": "POST",
+            "body": {
+                "mimeType": "application/json",
+                "text": "{\n  \"gymId\": 1,\n  \"email\": \"admin@gymcentral.com\",\n  \"password\": \"password123\",\n  \"role\": \"ADMIN\"\n}"
+            },
+            "parameters": [],
+            "headers": [
+                {
+                    "name": "Content-Type",
+                    "value": "application/json"
+                }
+            ],
+            "authentication": {
+                "type": "bearer",
+                "token": "{{ _.jwt_token }}"
+            },
+            "metaSortKey": -1708041600000,
+            "isPrivate": false,
+            "settingStoreCookies": true,
+            "settingSendCookies": true,
+            "settingDisableRenderRequestBody": false,
+            "settingEncodeUrl": true,
+            "settingRebuildPath": true,
+            "settingFollowRedirects": "global",
+            "_type": "request"
+        }
+    ]
+}
