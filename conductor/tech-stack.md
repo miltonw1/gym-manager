@@ -4,6 +4,8 @@
 - **Framework:** [NestJS](https://nestjs.com/) - A progressive Node.js framework for building efficient, reliable and scalable server-side applications.
 - **Language:** [TypeScript](https://www.typescriptlang.org/) - Adds optional static typing to JavaScript.
 - **Runtime:** [Node.js](https://nodejs.org/)
+- **Authentication:** [Passport.js](https://www.passportjs.org/) & [JWT](https://jwt.io/) - For secure authentication and authorization.
+- **Security:** [bcrypt](https://www.npmjs.com/package/bcrypt) - For password hashing.
 
 ## Database & Persistence
 - **ORM:** [Prisma](https://www.prisma.io/) - Next-generation Node.js and TypeScript ORM.
