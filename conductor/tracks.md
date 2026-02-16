@@ -4,5 +4,5 @@ This file tracks all major tracks for the project. Each track has its own detail
 
 ---
 
-- [~] **Track: CRUD para Usuarios (Arquitectura de Servicios, Controladores y DTOs)**
+- [x] **Track: CRUD para Usuarios (Arquitectura de Servicios, Controladores y DTOs)**
   *Link: [./tracks/user_crud_20260212/](./tracks/user_crud_20260212/)*
