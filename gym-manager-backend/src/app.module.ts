@@ -6,9 +6,10 @@ import { UsersController } from './users/users.controller';
 import { UsersService } from './users/users.service';
 import { GymsController } from './gyms/gyms.controller';
 import { GymsService } from './gyms/gyms.service';
+import { AuthModule } from './auth/auth.module';
 
 @Module({
-  imports: [PrismaModule],
+  imports: [PrismaModule, AuthModule],
   controllers: [AppController, UsersController, GymsController],
   providers: [AppService, UsersService, GymsService],
 })
