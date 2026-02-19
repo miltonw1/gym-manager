@@ -3,8 +3,8 @@ import { UserRole } from '@prisma/client';
 
 export class CreateUserDto {
   @IsNumber()
-  @IsNotEmpty()
-  gymId: number;
+  @IsOptional()
+  gymId?: number;
 
   @IsEmail()
   @IsNotEmpty()

@@ -34,27 +34,37 @@ export class UsersService {
     });
   }
 
-  async findAll(gymId: number): Promise<UserResponseDto[]> {
+  async findAll(gymId: number | null): Promise<UserResponseDto[]> {
+    const where: any = {};
+    if (gymId !== null) {
+      where.gymId = gymId;
+    }
+    
     return this.prisma.user.findMany({
-      where: { gymId },
+      where,
       select: this.userSelect,
     });
   }
 
-  async findOne(id: number, gymId: number): Promise<UserResponseDto> {
+  async findOne(id: number, gymId: number | null): Promise<UserResponseDto> {
+    const where: any = { id };
+    if (gymId !== null) {
+      where.gymId = gymId;
+    }
+
     const user = await this.prisma.user.findUnique({
-      where: { id, gymId },
+      where,
       select: this.userSelect,
     });
 
     if (!user) {
-      throw new NotFoundException(`User with ID ${id} not found in this gym`);
+      throw new NotFoundException(`User with ID ${id} not found`);
     }
 
     return user;
   }
 
-  async update(id: number, gymId: number, updateUserDto: UpdateUserDto): Promise<UserResponseDto> {
+  async update(id: number, gymId: number | null, updateUserDto: UpdateUserDto): Promise<UserResponseDto> {
     const { password, ...userData } = updateUserDto;
 
     // Check if user exists first to throw proper error
@@ -70,19 +80,29 @@ export class UsersService {
       };
     }
 
+    const where: any = { id };
+    if (gymId !== null) {
+      where.gymId = gymId;
+    }
+
     return this.prisma.user.update({
-      where: { id, gymId },
+      where,
       data: updateData,
       select: this.userSelect,
     });
   }
 
-  async remove(id: number, gymId: number): Promise<UserResponseDto> {
+  async remove(id: number, gymId: number | null): Promise<UserResponseDto> {
     // Check if user exists first to throw proper error
     await this.findOne(id, gymId);
 
+    const where: any = { id };
+    if (gymId !== null) {
+      where.gymId = gymId;
+    }
+
     return this.prisma.user.delete({
-      where: { id, gymId },
+      where,
       select: this.userSelect,
     });
   }
