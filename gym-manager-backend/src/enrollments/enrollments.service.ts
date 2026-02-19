@@ -21,6 +21,10 @@ export class EnrollmentsService {
 
     // 2. SEGURIDAD: Validar que el usuario tenga acceso al gimnasio del socio y del plan
     if (gymId !== null) {
+      if (member.gymId !== gymId || plan.gymId !== gymId) {
+        throw new ForbiddenException('You do not have access to this member or plan');
+      }
+    }
 
     // 3. SEGURIDAD EXTRA: El socio y el plan DEBEN ser del mismo gimnasio siempre
     if (member.gymId !== plan.gymId) {
