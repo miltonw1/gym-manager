@@ -11,5 +11,5 @@
 
 ## Phase 3: Pruebas y Seguridad
 - [x] Task: Proteger endpoints con `JwtAuthGuard` y `RolesGuard`. [b0ad1f9]
-- [ ] Task: Conductor - User Manual Verification 'Socios Funcionando'.
+- [x] Task: Conductor - User Manual Verification 'Socios Funcionando'. [fe771f8]
 - [x] Task: Actualizar colección de Insomnia. [fe771f8]
