@@ -28,7 +28,7 @@ model Gym {
 
   users     User[]
   members   Member[]
-  services  Service[]
+  plans     Plan[]
   exercises Exercise[]
   routines  Routine[]
 
@@ -76,7 +76,7 @@ model Member {
   @@index([gymId, lastName])
 }
 
-model Service {
+model Plan {
   id           Int      @id @default(autoincrement())
   gymId        Int
   name         String
@@ -95,18 +95,18 @@ model Service {
 model Enrollment {
   id        Int               @id @default(autoincrement())
   memberId  Int
-  serviceId Int
+  planId    Int
   startDate DateTime
   endDate   DateTime
   status    EnrollmentStatus  @default(ACTIVE)
   createdAt DateTime          @default(now())
 
   member   Member   @relation(fields: [memberId], references: [id], onDelete: Cascade)
-  service  Service  @relation(fields: [serviceId], references: [id], onDelete: Cascade)
+  plan     Plan     @relation(fields: [planId], references: [id], onDelete: Cascade)
   payments Payment[]
 
   @@index([memberId])
-  @@index([serviceId])
+  @@index([planId])
   @@index([endDate])
 }
 
