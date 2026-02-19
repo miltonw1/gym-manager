@@ -55,7 +55,7 @@
             "method": "POST",
             "body": {
                 "mimeType": "application/json",
-                "text": "{\n  \"email\": \"admin@gymcentral.com\",\n  \"password\": \"password123\"\n}"
+                "text": "{\n  \"email\": \"admin@gmail.com\",\n  \"password\": \"asd123\"\n}"
             },
             "parameters": [],
             "headers": [
@@ -161,90 +161,6 @@
             "_type": "request"
         },
         {
-            "_id": "req_list_users",
-            "parentId": "fld_users",
-            "modified": 1740000000000,
-            "created": 1740000000000,
-            "url": "{{ _.base_url }}/users",
-            "name": "List Users",
-            "description": "Lista todos los usuarios del gimnasio del usuario logueado",
-            "method": "GET",
-            "body": {},
-            "parameters": [],
-            "headers": [],
-            "authentication": {
-                "type": "bearer",
-                "token": "{{ _.jwt_token }}"
-            },
-            "metaSortKey": -1708041500000,
-            "_type": "request"
-        },
-        {
-            "_id": "req_get_user",
-            "parentId": "fld_users",
-            "modified": 1740000000000,
-            "created": 1740000000000,
-            "url": "{{ _.base_url }}/users/1",
-            "name": "Get User Detail",
-            "description": "Obtiene el detalle de un usuario específico",
-            "method": "GET",
-            "body": {},
-            "parameters": [],
-            "headers": [],
-            "authentication": {
-                "type": "bearer",
-                "token": "{{ _.jwt_token }}"
-            },
-            "metaSortKey": -1708041400000,
-            "_type": "request"
-        },
-        {
-            "_id": "req_update_user",
-            "parentId": "fld_users",
-            "modified": 1740000000000,
-            "created": 1740000000000,
-            "url": "{{ _.base_url }}/users/1",
-            "name": "Update User",
-            "description": "Actualiza los datos de un usuario",
-            "method": "PATCH",
-            "body": {
-                "mimeType": "application/json",
-                "text": "{\n  \"email\": \"new_staff@gymcentral.com\"\n}"
-            },
-            "parameters": [],
-            "headers": [
-                {
-                    "name": "Content-Type",
-                    "value": "application/json"
-                }
-            ],
-            "authentication": {
-                "type": "bearer",
-                "token": "{{ _.jwt_token }}"
-            },
-            "metaSortKey": -1708041300000,
-            "_type": "request"
-        },
-        {
-            "_id": "req_delete_user",
-            "parentId": "fld_users",
-            "modified": 1740000000000,
-            "created": 1740000000000,
-            "url": "{{ _.base_url }}/users/1",
-            "name": "Delete User",
-            "description": "Elimina un usuario del gimnasio",
-            "method": "DELETE",
-            "body": {},
-            "parameters": [],
-            "headers": [],
-            "authentication": {
-                "type": "bearer",
-                "token": "{{ _.jwt_token }}"
-            },
-            "metaSortKey": -1708041200000,
-            "_type": "request"
-        },
-        {
             "_id": "fld_members",
             "parentId": "wrk_gym_manager",
             "modified": 1740000000000,
@@ -263,7 +179,7 @@
             "created": 1740000000000,
             "url": "{{ _.base_url }}/members",
             "name": "Create Member",
-            "description": "Crea un nuevo socio para el gimnasio del usuario logueado",
+            "description": "Crea un nuevo socio",
             "method": "POST",
             "body": {
                 "mimeType": "application/json",
@@ -284,55 +200,29 @@
             "_type": "request"
         },
         {
-            "_id": "req_list_members",
-            "parentId": "fld_members",
+            "_id": "fld_plans",
+            "parentId": "wrk_gym_manager",
             "modified": 1740000000000,
             "created": 1740000000000,
-            "url": "{{ _.base_url }}/members",
-            "name": "List Members",
-            "description": "Lista todos los socios del gimnasio del usuario logueado",
-            "method": "GET",
-            "body": {},
-            "parameters": [],
-            "headers": [],
-            "authentication": {
-                "type": "bearer",
-                "token": "{{ _.jwt_token }}"
-            },
-            "metaSortKey": -1708041500000,
-            "_type": "request"
+            "name": "Plans",
+            "description": "",
+            "environment": {},
+            "environmentPropertyOrder": null,
+            "metaSortKey": -1708041300000,
+            "_type": "request_group"
         },
         {
-            "_id": "req_get_member",
-            "parentId": "fld_members",
+            "_id": "req_create_plan",
+            "parentId": "fld_plans",
             "modified": 1740000000000,
             "created": 1740000000000,
-            "url": "{{ _.base_url }}/members/1",
-            "name": "Get Member Detail",
-            "description": "Obtiene el detalle de un socio específico",
-            "method": "GET",
-            "body": {},
-            "parameters": [],
-            "headers": [],
-            "authentication": {
-                "type": "bearer",
-                "token": "{{ _.jwt_token }}"
-            },
-            "metaSortKey": -1708041400000,
-            "_type": "request"
-        },
-        {
-            "_id": "req_update_member",
-            "parentId": "fld_members",
-            "modified": 1740000000000,
-            "created": 1740000000000,
-            "url": "{{ _.base_url }}/members/1",
-            "name": "Update Member",
-            "description": "Actualiza los datos de un socio",
-            "method": "PATCH",
+            "url": "{{ _.base_url }}/plans",
+            "name": "Create Plan",
+            "description": "Crea un nuevo plan (servicio) para el gimnasio",
+            "method": "POST",
             "body": {
                 "mimeType": "application/json",
-                "text": "{\n  \"phone\": \"1122223333\",\n  \"active\": false\n}"
+                "text": "{\n  \"name\": \"Pase Libre Musculación\",\n  \"price\": 15000.50,\n  \"durationDays\": 30\n}"
             },
             "parameters": [],
             "headers": [
@@ -345,18 +235,18 @@
                 "type": "bearer",
                 "token": "{{ _.jwt_token }}"
             },
-            "metaSortKey": -1708041300000,
+            "metaSortKey": -1708041600000,
             "_type": "request"
         },
         {
-            "_id": "req_delete_member",
-            "parentId": "fld_members",
+            "_id": "req_list_plans",
+            "parentId": "fld_plans",
             "modified": 1740000000000,
             "created": 1740000000000,
-            "url": "{{ _.base_url }}/members/1",
-            "name": "Delete Member",
-            "description": "Elimina un socio del gimnasio",
-            "method": "DELETE",
+            "url": "{{ _.base_url }}/plans",
+            "name": "List Plans",
+            "description": "Lista los planes del gimnasio",
+            "method": "GET",
             "body": {},
             "parameters": [],
             "headers": [],
@@ -364,7 +254,65 @@
                 "type": "bearer",
                 "token": "{{ _.jwt_token }}"
             },
+            "metaSortKey": -1708041500000,
+            "_type": "request"
+        },
+        {
+            "_id": "fld_enrollments",
+            "parentId": "wrk_gym_manager",
+            "modified": 1740000000000,
+            "created": 1740000000000,
+            "name": "Enrollments",
+            "description": "",
+            "environment": {},
+            "environmentPropertyOrder": null,
             "metaSortKey": -1708041200000,
+            "_type": "request_group"
+        },
+        {
+            "_id": "req_create_enrollment",
+            "parentId": "fld_enrollments",
+            "modified": 1740000000000,
+            "created": 1740000000000,
+            "url": "{{ _.base_url }}/enrollments",
+            "name": "Create Enrollment",
+            "description": "Inscribe a un socio en un plan",
+            "method": "POST",
+            "body": {
+                "mimeType": "application/json",
+                "text": "{\n  \"memberId\": 1,\n  \"planId\": 1\n}"
+            },
+            "parameters": [],
+            "headers": [
+                {
+                    "name": "Content-Type",
+                    "value": "application/json"
+                }
+            ],
+            "authentication": {
+                "type": "bearer",
+                "token": "{{ _.jwt_token }}"
+            },
+            "metaSortKey": -1708041600000,
+            "_type": "request"
+        },
+        {
+            "_id": "req_list_enrollments",
+            "parentId": "fld_enrollments",
+            "modified": 1740000000000,
+            "created": 1740000000000,
+            "url": "{{ _.base_url }}/enrollments",
+            "name": "List Enrollments",
+            "description": "Lista las inscripciones del gimnasio",
+            "method": "GET",
+            "body": {},
+            "parameters": [],
+            "headers": [],
+            "authentication": {
+                "type": "bearer",
+                "token": "{{ _.jwt_token }}"
+            },
+            "metaSortKey": -1708041500000,
             "_type": "request"
         }
     ]
