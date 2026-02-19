@@ -10,7 +10,7 @@ This file tracks all major tracks for the project. Each track has its own detail
 - [x] **Track: Sistema de Autenticación (JWT, Passport y RolesGuard)**
   *Link: [./tracks/auth_system_20260215/](./tracks/auth_system_20260215/)*
 
-- [~] **Track: Gestión de Miembros (Socios)**
+- [x] **Track: Gestión de Miembros (Socios)**
   *Link: [./tracks/member_management_20260216/](./tracks/member_management_20260216/)*
 
 - [ ] **Track: Gestión de Membresías (Planes e Inscripciones)**
