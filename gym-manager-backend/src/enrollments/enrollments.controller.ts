@@ -44,6 +44,14 @@ export class EnrollmentsController {
     return this.enrollmentsService.findByMember(memberId, gymId);
   }
 
+  @Get('expiring')
+  findExpiring(
+    @GetUser('gymId') gymId: number | null,
+    @Query('days') days?: number,
+  ): Promise<EnrollmentResponseDto[]> {
+    return this.enrollmentsService.findExpiring(gymId, days);
+  }
+
   @Get(':id')
   findOne(
     @Param('id', ParseIntPipe) id: number,

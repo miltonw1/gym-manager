@@ -135,4 +135,30 @@ describe('EnrollmentsService', () => {
       await expect(service.findByMember(1, 1)).rejects.toThrow(NotFoundException);
     });
   });
+
+  describe('findExpiring', () => {
+    it('should return enrollments expiring within the given days for the gym', async () => {
+      const gymId = 1;
+      const days = 7;
+      const enrollments = [{ id: 1, endDate: new Date() }];
+      
+      mockPrismaService.enrollment.findMany.mockResolvedValue(enrollments);
+
+      const result = await service.findExpiring(gymId, days);
+
+      expect(result).toEqual(enrollments);
+      expect(prisma.enrollment.findMany).toHaveBeenCalledWith({
+        where: {
+          member: { gymId },
+          status: EnrollmentStatus.ACTIVE,
+          endDate: {
+            gte: expect.any(Date),
+            lte: expect.any(Date),
+          },
+        },
+        include: expect.any(Object),
+        orderBy: { endDate: 'asc' },
+      });
+    });
+  });
 });
