@@ -103,4 +103,36 @@ describe('EnrollmentsService', () => {
         await expect(service.create(gymId, { memberId, planId })).rejects.toThrow(ForbiddenException);
     });
   });
+
+  describe('findByMember', () => {
+    it('should return enrollments for a member in the same gym', async () => {
+      const gymId = 1;
+      const memberId = 1;
+      const enrollments = [{ id: 1, memberId, planId: 1 }];
+      
+      mockPrismaService.member.findUnique.mockResolvedValue({ id: memberId, gymId });
+      mockPrismaService.enrollment.findMany.mockResolvedValue(enrollments);
+
+      const result = await service.findByMember(memberId, gymId);
+
+      expect(result).toEqual(enrollments);
+      expect(prisma.enrollment.findMany).toHaveBeenCalledWith({
+        where: { memberId },
+        include: expect.any(Object),
+        orderBy: { startDate: 'desc' },
+      });
+    });
+
+    it('should throw ForbiddenException if member belongs to another gym', async () => {
+      mockPrismaService.member.findUnique.mockResolvedValue({ id: 1, gymId: 2 });
+
+      await expect(service.findByMember(1, 1)).rejects.toThrow(ForbiddenException);
+    });
+
+    it('should throw NotFoundException if member not found', async () => {
+      mockPrismaService.member.findUnique.mockResolvedValue(null);
+
+      await expect(service.findByMember(1, 1)).rejects.toThrow(NotFoundException);
+    });
+  });
 });

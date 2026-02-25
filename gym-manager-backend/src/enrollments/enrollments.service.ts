@@ -85,6 +85,29 @@ export class EnrollmentsService {
     });
   }
 
+  async findByMember(memberId: number, gymId: number | null): Promise<EnrollmentResponseDto[]> {
+    const member = await this.prisma.member.findUnique({
+      where: { id: memberId },
+    });
+
+    if (!member) {
+      throw new NotFoundException(`Member with ID ${memberId} not found`);
+    }
+
+    if (gymId && member.gymId !== gymId) {
+      throw new ForbiddenException('You do not have access to this member');
+    }
+
+    return this.prisma.enrollment.findMany({
+      where: { memberId },
+      include: {
+        plan: true,
+        member: true,
+      },
+      orderBy: { startDate: 'desc' },
+    });
+  }
+
   async findOne(id: number, gymId: number | null): Promise<EnrollmentResponseDto> {
     const enrollment = await this.prisma.enrollment.findUnique({
       where: { id },
