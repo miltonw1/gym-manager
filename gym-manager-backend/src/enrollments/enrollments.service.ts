@@ -31,8 +31,24 @@ export class EnrollmentsService {
       throw new BadRequestException('The member and the plan must belong to the same gym');
     }
 
-    // 4. Lógica de Fechas
-    const startDate = startDateStr ? new Date(startDateStr) : new Date();
+    // 4. Lógica de Fechas (Encadenamiento Automático / Renovación)
+    let startDate = startDateStr ? new Date(startDateStr) : new Date();
+
+    // Buscar si ya tiene una inscripción activa que venza después de "ahora"
+    const lastEnrollment = await this.prisma.enrollment.findFirst({
+      where: {
+        memberId,
+        status: EnrollmentStatus.ACTIVE,
+        endDate: { gt: new Date() },
+      },
+      orderBy: { endDate: 'desc' },
+    });
+
+    if (lastEnrollment && !startDateStr) {
+      // Si no se especificó una fecha de inicio manual y hay una activa, encadenamos
+      startDate = new Date(lastEnrollment.endDate);
+    }
+
     const endDate = new Date(startDate);
     endDate.setDate(startDate.getDate() + plan.durationDays);
 
