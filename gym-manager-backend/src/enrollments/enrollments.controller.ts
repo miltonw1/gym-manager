@@ -36,6 +36,14 @@ export class EnrollmentsController {
     return this.enrollmentsService.findAll(gymId);
   }
 
+  @Get('member/:memberId')
+  findByMember(
+    @Param('memberId', ParseIntPipe) memberId: number,
+    @GetUser('gymId') gymId: number | null,
+  ): Promise<EnrollmentResponseDto[]> {
+    return this.enrollmentsService.findByMember(memberId, gymId);
+  }
+
   @Get(':id')
   findOne(
     @Param('id', ParseIntPipe) id: number,
