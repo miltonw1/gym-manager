@@ -108,6 +108,28 @@ export class EnrollmentsService {
     });
   }
 
+  async findExpiring(gymId: number | null, days: number = 7): Promise<EnrollmentResponseDto[]> {
+    const now = new Date();
+    const futureDate = new Date();
+    futureDate.setDate(now.getDate() + Number(days));
+
+    return this.prisma.enrollment.findMany({
+      where: {
+        member: gymId ? { gymId: Number(gymId) } : {},
+        status: EnrollmentStatus.ACTIVE,
+        endDate: {
+          gte: now,
+          lte: futureDate,
+        },
+      },
+      include: {
+        member: { select: { firstName: true, lastName: true, dni: true } },
+        plan: { select: { name: true, price: true } },
+      },
+      orderBy: { endDate: 'asc' },
+    });
+  }
+
   async findOne(id: number, gymId: number | null): Promise<EnrollmentResponseDto> {
     const enrollment = await this.prisma.enrollment.findUnique({
       where: { id },
