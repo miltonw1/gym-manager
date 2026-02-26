@@ -372,7 +372,7 @@
             "created": 1740000000000,
             "url": "{{ _.base_url }}/payments/revenue",
             "name": "Get Monthly Revenue",
-            "description": "Obtiene la recaudación total del mes actual",
+            "description": "Obtiene la recaudación total del mes actual con detalles de socios",
             "method": "GET",
             "body": {},
             "parameters": [
