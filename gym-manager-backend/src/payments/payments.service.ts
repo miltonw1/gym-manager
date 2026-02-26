@@ -24,9 +24,15 @@ export class PaymentsService {
           lte: endDate,
         },
       },
-      select: {
-        amount: true,
+      include: {
+        enrollment: {
+          select: {
+            member: { select: { firstName: true, lastName: true, dni: true } },
+            plan: { select: { name: true } },
+          },
+        },
       },
+      orderBy: { paidAt: 'desc' },
     });
 
     const totalRevenue = payments.reduce((sum, p) => sum + Number(p.amount), 0);
@@ -36,6 +42,14 @@ export class PaymentsService {
       year: targetYear,
       totalRevenue,
       transactionCount: payments.length,
+      details: payments.map(p => ({
+        id: p.id,
+        amount: p.amount,
+        paidAt: p.paidAt,
+        member: `${p.enrollment.member.firstName} ${p.enrollment.member.lastName}`,
+        dni: p.enrollment.member.dni,
+        plan: p.enrollment.plan.name,
+      })),
     };
   }
 }
