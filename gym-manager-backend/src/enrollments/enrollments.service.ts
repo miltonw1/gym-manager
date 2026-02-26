@@ -52,23 +52,35 @@ export class EnrollmentsService {
     const endDate = new Date(startDate);
     endDate.setDate(startDate.getDate() + plan.durationDays);
 
-    // 5. Crear Enrollment
-    return this.prisma.enrollment.create({
-      data: {
-        memberId,
-        planId,
-        startDate,
-        endDate,
-        status: EnrollmentStatus.ACTIVE,
-      },
-      include: {
-        member: {
-          select: { firstName: true, lastName: true, dni: true }
+    // 5. Crear Enrollment y Payment en una transacción
+    return this.prisma.$transaction(async (tx) => {
+      const enrollment = await tx.enrollment.create({
+        data: {
+          memberId,
+          planId,
+          startDate,
+          endDate,
+          status: EnrollmentStatus.ACTIVE,
         },
-        plan: {
-          select: { name: true, price: true, durationDays: true }
+        include: {
+          member: {
+            select: { firstName: true, lastName: true, dni: true }
+          },
+          plan: {
+            select: { name: true, price: true, durationDays: true }
+          }
         }
-      }
+      });
+
+      // Crear el registro de pago
+      await tx.payment.create({
+        data: {
+          enrollmentId: enrollment.id,
+          amount: plan.price,
+        },
+      });
+
+      return enrollment;
     });
   }
 

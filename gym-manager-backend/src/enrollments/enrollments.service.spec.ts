@@ -9,11 +9,15 @@ describe('EnrollmentsService', () => {
   let prisma: PrismaService;
 
   const mockPrismaService = {
+    $transaction: jest.fn((callback) => callback(mockPrismaService)),
     member: {
       findUnique: jest.fn(),
     },
     plan: {
       findUnique: jest.fn(),
+    },
+    payment: {
+      create: jest.fn(),
     },
     enrollment: {
       create: jest.fn(),
@@ -43,12 +47,12 @@ describe('EnrollmentsService', () => {
     const memberId = 1;
     const planId = 1;
     const mockMember = { id: memberId, gymId, firstName: 'John' };
-    const mockPlan = { id: planId, gymId, name: 'Monthly', durationDays: 30 };
+    const mockPlan = { id: planId, gymId, name: 'Monthly', price: 50.0, durationDays: 30 };
 
-    it('should create a new enrollment starting today if no active enrollment exists', async () => {
+    it('should create a new enrollment and a payment starting today if no active enrollment exists', async () => {
       mockPrismaService.member.findUnique.mockResolvedValue(mockMember);
       mockPrismaService.plan.findUnique.mockResolvedValue(mockPlan);
-      mockPrismaService.enrollment.findFirst.mockResolvedValue(null); // No previous enrollment
+      mockPrismaService.enrollment.findFirst.mockResolvedValue(null);
       
       const dto = { memberId, planId };
       const now = new Date();
@@ -60,9 +64,14 @@ describe('EnrollmentsService', () => {
 
       const result = await service.create(gymId, dto);
 
-      expect(result.startDate.getTime()).toBeGreaterThanOrEqual(now.getTime() - 1000);
-      expect(result.planId).toBe(planId);
       expect(prisma.enrollment.create).toHaveBeenCalled();
+      expect(prisma.payment.create).toHaveBeenCalledWith({
+        data: {
+          enrollmentId: 1,
+          amount: mockPlan.price,
+        }
+      });
+      expect(result.startDate.getTime()).toBeGreaterThanOrEqual(now.getTime() - 1000);
     });
 
     it('should chain enrollment if an active one exists (Automatic Renewal)', async () => {
