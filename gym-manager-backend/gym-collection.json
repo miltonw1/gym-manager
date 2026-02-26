@@ -1,7 +1,7 @@
 {
     "_type": "export",
     "__export_format": 4,
-    "__export_date": "2026-02-19T00:00:00.000Z",
+    "__export_date": "2026-02-25T00:00:00.000Z",
     "__export_source": "insomnia.desktop.app:v2023.5.8",
     "resources": [
         {
@@ -313,6 +313,86 @@
                 "token": "{{ _.jwt_token }}"
             },
             "metaSortKey": -1708041500000,
+            "_type": "request"
+        },
+        {
+            "_id": "req_list_enrollments_member",
+            "parentId": "fld_enrollments",
+            "modified": 1740000000000,
+            "created": 1740000000000,
+            "url": "{{ _.base_url }}/enrollments/member/1",
+            "name": "List Enrollments by Member",
+            "description": "Lista el historial de inscripciones de un socio",
+            "method": "GET",
+            "body": {},
+            "parameters": [],
+            "headers": [],
+            "authentication": {
+                "type": "bearer",
+                "token": "{{ _.jwt_token }}"
+            },
+            "metaSortKey": -1708041400000,
+            "_type": "request"
+        },
+        {
+            "_id": "req_list_expiring",
+            "parentId": "fld_enrollments",
+            "modified": 1740000000000,
+            "created": 1740000000000,
+            "url": "{{ _.base_url }}/enrollments/expiring?days=7",
+            "name": "List Expiring Enrollments",
+            "description": "Lista las inscripciones próximas a vencer",
+            "method": "GET",
+            "body": {},
+            "parameters": [],
+            "headers": [],
+            "authentication": {
+                "type": "bearer",
+                "token": "{{ _.jwt_token }}"
+            },
+            "metaSortKey": -1708041300000,
+            "_type": "request"
+        },
+        {
+            "_id": "fld_payments",
+            "parentId": "wrk_gym_manager",
+            "modified": 1740000000000,
+            "created": 1740000000000,
+            "name": "Payments & Revenue",
+            "description": "",
+            "environment": {},
+            "environmentPropertyOrder": null,
+            "metaSortKey": -1708041100000,
+            "_type": "request_group"
+        },
+        {
+            "_id": "req_get_revenue",
+            "parentId": "fld_payments",
+            "modified": 1740000000000,
+            "created": 1740000000000,
+            "url": "{{ _.base_url }}/payments/revenue",
+            "name": "Get Monthly Revenue",
+            "description": "Obtiene la recaudación total del mes actual",
+            "method": "GET",
+            "body": {},
+            "parameters": [
+                {
+                    "name": "month",
+                    "value": "2",
+                    "disabled": true
+                },
+                {
+                    "name": "year",
+                    "value": "2026",
+                    "disabled": true
+                }
+            ],
+            "headers": [],
+            "authentication": {
+                "type": "bearer",
+                "token": "{{ _.jwt_token }}"
+            },
+            "metaSortKey": -1708041600000,
             "_type": "request"
         }
     ]
