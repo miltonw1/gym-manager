@@ -1,6 +1,6 @@
 # Backend node modules
 gym-manager-backend/node_modules/
-
+gym-manager-frontend/node_modules/
 # Backend env file
 gym-manager-backend/.env
 
