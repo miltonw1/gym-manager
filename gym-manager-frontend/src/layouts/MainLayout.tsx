@@ -1,6 +1,17 @@
-import { Outlet } from 'react-router';
+import { Outlet, useNavigate } from 'react-router';
+import { useAuthStore } from '@/store/useAuthStore';
+import { Button } from '@/components/ui/button';
+import { LogOut } from 'lucide-react';
 
 const MainLayout = () => {
+  const navigate = useNavigate();
+  const { logout } = useAuthStore();
+
+  const handleLogout = () => {
+    logout();
+    navigate('/login');
+  };
+
   return (
     <div className="flex min-h-svh flex-col">
       <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
@@ -12,7 +23,10 @@ const MainLayout = () => {
           </div>
           <div className="flex flex-1 items-center justify-between space-x-2 md:justify-end">
             <nav className="flex items-center space-x-4">
-              <span className="text-sm font-medium">Admin</span>
+              <Button variant="ghost" size="sm" onClick={handleLogout} className="gap-2">
+                <LogOut className="h-4 w-4" />
+                Cerrar Sesión
+              </Button>
             </nav>
           </div>
         </div>
