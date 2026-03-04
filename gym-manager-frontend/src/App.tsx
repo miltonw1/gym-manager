@@ -1,28 +1,19 @@
 import { Routes, Route, Navigate } from 'react-router';
 import ProtectedRoute from './components/auth/ProtectedRoute';
-
-const Dashboard = () => (
-  <div className="flex min-h-svh flex-col items-center justify-center">
-    <h1 className="text-2xl font-bold">Dashboard (Protected)</h1>
-    <p>Welcome to your gym manager.</p>
-  </div>
-);
-
-const Login = () => (
-  <div className="flex min-h-svh flex-col items-center justify-center">
-    <h1 className="text-2xl font-bold">Login Page</h1>
-    <p>Please log in to continue.</p>
-  </div>
-);
+import MainLayout from './layouts/MainLayout';
+import LoginPage from './pages/LoginPage';
+import DashboardPage from './pages/DashboardPage';
 
 function App() {
   return (
     <Routes>
-      <Route path="/login" element={<Login />} />
+      <Route path="/login" element={<LoginPage />} />
       
       <Route element={<ProtectedRoute />}>
-        <Route path="/dashboard" element={<Dashboard />} />
-        <Route path="/" element={<Navigate to="/dashboard" replace />} />
+        <Route element={<MainLayout />}>
+          <Route path="/dashboard" element={<DashboardPage />} />
+          <Route path="/" element={<Navigate to="/dashboard" replace />} />
+        </Route>
       </Route>
 
       <Route path="*" element={<Navigate to="/dashboard" replace />} />
