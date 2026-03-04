@@ -41,3 +41,14 @@ Build the visual login form using shadcn/ui and connect it to the backend.
     - [x] Add password visibility toggle and "Remember Me" checkbox.
     - [x] Implement inline error handling for invalid credentials.
 - [x] **Task: Conductor - User Manual Verification 'Phase 4: Login UI & Feature Integration' (Protocol in workflow.md)** 788b35c
+
+## Phase 5: Architecture Refinement (Pages & Layouts) [checkpoint: 756b0f4]
+Organize the app structure and integrate the login flow properly.
+
+- [x] **Task 1: Create Pages & Layouts Structure** 756b0f4
+    - [x] Create `src/pages/LoginPage.tsx` and move `LoginForm` there.
+    - [x] Create `src/pages/DashboardPage.tsx` as a separate file.
+    - [x] Implement `src/layouts/MainLayout.tsx` with a basic sidebar/navigation.
+- [x] **Task 2: Refactor App.tsx for Routes & Layouts** 756b0f4
+    - [x] Wrap protected routes with `MainLayout`.
+    - [x] Ensure `App.tsx` only contains the high-level routing logic.
