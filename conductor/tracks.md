@@ -20,3 +20,8 @@ This file tracks all major tracks for the project. Each track has its own detail
 
 - [ ] **Track: Renovación de Membresía (Flexible y Promociones)**
   *Link: [./tracks/enrollment_renewal_20260228/](./tracks/enrollment_renewal_20260228/)*
+
+---
+
+- [ ] **Track: Frontend Authentication - Login & Session Management**
+*Link: [./tracks/frontend_login_20260303/](./tracks/frontend_login_20260303/)*
