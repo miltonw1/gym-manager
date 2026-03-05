@@ -6,7 +6,7 @@ import { useNavigate } from 'react-router';
 import { Eye, EyeOff, Loader2 } from 'lucide-react';
 import { useAuthStore } from '@/store/useAuthStore';
 import apiClient from '@/lib/api-client';
-import { LoginResponse } from '@/types/auth.types';
+import type { LoginResponse } from '@/types/auth.types';
 
 import { Button } from '@/components/ui/button';
 import {
@@ -31,7 +31,7 @@ import { Checkbox } from '@/components/ui/checkbox';
 const loginSchema = z.object({
   email: z.string().min(1, 'Email es requerido').email('Email inválido'),
   password: z.string().min(1, 'Password es requerido').min(6, 'La contraseña debe tener al menos 6 caracteres'),
-  rememberMe: z.boolean().default(false),
+  rememberMe: z.boolean(),
 });
 
 type LoginValues = z.infer<typeof loginSchema>;
