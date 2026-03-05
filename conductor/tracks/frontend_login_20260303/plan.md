@@ -52,3 +52,8 @@ Organize the app structure and integrate the login flow properly.
 - [x] **Task 2: Refactor App.tsx for Routes & Layouts** 756b0f4
     - [x] Wrap protected routes with `MainLayout`.
     - [x] Ensure `App.tsx` only contains the high-level routing logic.
+
+## Phase 6: Review Fixes [checkpoint: 7b5181f]
+Address feedback from code review.
+
+- [x] Task: Apply review suggestions 7b5181f
