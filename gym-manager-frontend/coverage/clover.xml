@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<coverage generated="1772665016754" clover="3.2.0">
+  <project timestamp="1772665016754" name="All files">
+    <metrics statements="65" coveredstatements="60" conditionals="27" coveredconditionals="19" methods="25" coveredmethods="22" elements="117" coveredelements="101" complexity="0" loc="65" ncloc="65" packages="4" files="9" classes="9"/>
+    <package name="components.auth">
+      <metrics statements="23" coveredstatements="22" conditionals="12" coveredconditionals="7" methods="6" coveredmethods="5"/>
+      <file name="LoginForm.tsx" path="D:\gym-manager\gym-manager-frontend\src\components\auth\LoginForm.tsx">
+        <metrics statements="23" coveredstatements="22" conditionals="12" coveredconditionals="7" methods="6" coveredmethods="5"/>
+        <line num="31" count="1" type="stmt"/>
+        <line num="39" count="1" type="stmt"/>
+        <line num="40" count="8" type="stmt"/>
+        <line num="41" count="8" type="stmt"/>
+        <line num="42" count="8" type="stmt"/>
+        <line num="44" count="8" type="stmt"/>
+        <line num="45" count="8" type="stmt"/>
+        <line num="47" count="8" type="stmt"/>
+        <line num="56" count="8" type="stmt"/>
+        <line num="57" count="2" type="stmt"/>
+        <line num="58" count="2" type="stmt"/>
+        <line num="59" count="2" type="stmt"/>
+        <line num="60" count="2" type="stmt"/>
+        <line num="65" count="1" type="stmt"/>
+        <line num="66" count="1" type="stmt"/>
+        <line num="68" count="1" type="cond" truecount="1" falsecount="1"/>
+        <line num="69" count="1" type="stmt"/>
+        <line num="71" count="2" type="stmt"/>
+        <line num="75" count="8" type="stmt"/>
+        <line num="90" count="11" type="stmt"/>
+        <line num="103" count="11" type="stmt"/>
+        <line num="118" count="0" type="stmt"/>
+        <line num="138" count="8" type="stmt"/>
+      </file>
+    </package>
+    <package name="components.ui">
+      <metrics statements="41" coveredstatements="37" conditionals="15" coveredconditionals="12" methods="18" coveredmethods="16"/>
+      <file name="button.tsx" path="D:\gym-manager\gym-manager-frontend\src\components\ui\button.tsx">
+        <metrics statements="3" coveredstatements="3" conditionals="5" coveredconditionals="4" methods="1" coveredmethods="1"/>
+        <line num="7" count="1" type="stmt"/>
+        <line num="51" count="16" type="cond" truecount="1" falsecount="1"/>
+        <line num="53" count="16" type="stmt"/>
+      </file>
+      <file name="card.tsx" path="D:\gym-manager\gym-manager-frontend\src\components\ui\card.tsx">
+        <metrics statements="7" coveredstatements="6" conditionals="0" coveredconditionals="0" methods="7" coveredmethods="6"/>
+        <line num="6" count="7" type="stmt"/>
+        <line num="19" count="7" type="stmt"/>
+        <line num="32" count="7" type="stmt"/>
+        <line num="42" count="7" type="stmt"/>
+        <line num="52" count="0" type="stmt"/>
+        <line num="65" count="7" type="stmt"/>
+        <line num="75" count="7" type="stmt"/>
+      </file>
+      <file name="checkbox.tsx" path="D:\gym-manager\gym-manager-frontend\src\components\ui\checkbox.tsx">
+        <metrics statements="1" coveredstatements="1" conditionals="0" coveredconditionals="0" methods="1" coveredmethods="1"/>
+        <line num="11" count="7" type="stmt"/>
+      </file>
+      <file name="form.tsx" path="D:\gym-manager\gym-manager-frontend\src\components\ui\form.tsx">
+        <metrics statements="28" coveredstatements="25" conditionals="10" coveredconditionals="8" methods="7" coveredmethods="6"/>
+        <line num="17" count="1" type="stmt"/>
+        <line num="26" count="1" type="stmt"/>
+        <line num="30" count="1" type="stmt"/>
+        <line num="36" count="21" type="stmt"/>
+        <line num="43" count="1" type="stmt"/>
+        <line num="44" count="66" type="stmt"/>
+        <line num="45" count="66" type="stmt"/>
+        <line num="46" count="66" type="stmt"/>
+        <line num="47" count="66" type="stmt"/>
+        <line num="48" count="66" type="stmt"/>
+        <line num="50" count="66" type="cond" truecount="1" falsecount="1"/>
+        <line num="51" count="0" type="stmt"/>
+        <line num="54" count="66" type="stmt"/>
+        <line num="56" count="66" type="stmt"/>
+        <line num="70" count="1" type="stmt"/>
+        <line num="75" count="18" type="stmt"/>
+        <line num="77" count="18" type="stmt"/>
+        <line num="92" count="22" type="stmt"/>
+        <line num="94" count="22" type="stmt"/>
+        <line num="106" count="22" type="stmt"/>
+        <line num="108" count="22" type="stmt"/>
+        <line num="124" count="0" type="stmt"/>
+        <line num="126" count="0" type="stmt"/>
+        <line num="137" count="22" type="stmt"/>
+        <line num="138" count="22" type="cond" truecount="3" falsecount="1"/>
+        <line num="140" count="22" type="cond" truecount="2" falsecount="0"/>
+        <line num="141" count="20" type="stmt"/>
+        <line num="144" count="2" type="stmt"/>
+      </file>
+      <file name="input.tsx" path="D:\gym-manager\gym-manager-frontend\src\components\ui\input.tsx">
+        <metrics statements="1" coveredstatements="1" conditionals="0" coveredconditionals="0" methods="1" coveredmethods="1"/>
+        <line num="6" count="22" type="stmt"/>
+      </file>
+      <file name="label.tsx" path="D:\gym-manager\gym-manager-frontend\src\components\ui\label.tsx">
+        <metrics statements="1" coveredstatements="1" conditionals="0" coveredconditionals="0" methods="1" coveredmethods="1"/>
+        <line num="12" count="22" type="stmt"/>
+      </file>
+    </package>
+    <package name="lib">
+      <metrics statements="1" coveredstatements="1" conditionals="0" coveredconditionals="0" methods="1" coveredmethods="1"/>
+      <file name="utils.ts" path="D:\gym-manager\gym-manager-frontend\src\lib\utils.ts">
+        <metrics statements="1" coveredstatements="1" conditionals="0" coveredconditionals="0" methods="1" coveredmethods="1"/>
+        <line num="5" count="151" type="stmt"/>
+      </file>
+    </package>
+    <package name="types">
+      <metrics statements="0" coveredstatements="0" conditionals="0" coveredconditionals="0" methods="0" coveredmethods="0"/>
+      <file name="auth.types.ts" path="D:\gym-manager\gym-manager-frontend\src\types\auth.types.ts">
+        <metrics statements="0" coveredstatements="0" conditionals="0" coveredconditionals="0" methods="0" coveredmethods="0"/>
+      </file>
+    </package>
+  </project>
+</coverage>
