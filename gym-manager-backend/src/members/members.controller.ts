@@ -1,8 +1,9 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, ParseIntPipe, ConflictException } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, ParseIntPipe, ConflictException, Query } from '@nestjs/common';
 import { MembersService } from './members.service';
 import { CreateMemberDto } from './dto/create-member.dto';
 import { UpdateMemberDto } from './dto/update-member.dto';
 import { MemberResponseDto } from './dto/member-response.dto';
+import { GetMembersQueryDto } from './dto/get-members-query.dto';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { RolesGuard } from '../auth/guards/roles.guard';
 import { GetUser } from '../auth/decorators/get-user.decorator';
@@ -27,8 +28,11 @@ export class MembersController {
   }
 
   @Get()
-  findAll(@GetUser('gymId') tokenGymId: number | null): Promise<MemberResponseDto[]> {
-    return this.membersService.findAll(tokenGymId);
+  findAll(
+    @GetUser('gymId') tokenGymId: number | null,
+    @Query() queryDto: GetMembersQueryDto,
+  ) {
+    return this.membersService.findAll(tokenGymId, queryDto);
   }
 
   @Get(':id')

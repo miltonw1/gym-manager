@@ -3,6 +3,7 @@ import { PrismaService } from '../prisma/prisma.service';
 import { CreateMemberDto } from './dto/create-member.dto';
 import { UpdateMemberDto } from './dto/update-member.dto';
 import { MemberResponseDto } from './dto/member-response.dto';
+import { GetMembersQueryDto, MemberFilterStatus } from './dto/get-members-query.dto';
 
 @Injectable()
 export class MembersService {
@@ -32,14 +33,86 @@ export class MembersService {
     });
   }
 
-  async findAll(gymId: number | null): Promise<MemberResponseDto[]> {
+  async findAll(gymId: number | null, queryDto: GetMembersQueryDto) {
+    const { skip = 0, take = 10, search, status } = queryDto;
+    
     const where: any = {};
     if (gymId !== null) {
       where.gymId = gymId;
     }
-    return this.prisma.member.findMany({
-      where,
-    });
+
+    if (search) {
+      where.OR = [
+        { firstName: { contains: search, mode: 'insensitive' } },
+        { lastName: { contains: search, mode: 'insensitive' } },
+        { dni: { contains: search, mode: 'insensitive' } },
+      ];
+    }
+
+    if (status && status !== MemberFilterStatus.ALL) {
+      const now = new Date();
+      if (status === MemberFilterStatus.EXPIRED) {
+        where.enrollments = {
+          some: { endDate: { lt: now } },
+          none: { endDate: { gte: now }, status: 'ACTIVE' },
+        };
+      } else if (status === MemberFilterStatus.ACTIVE) {
+        where.enrollments = {
+          some: { endDate: { gte: now }, status: 'ACTIVE' },
+        };
+      } else if (status === MemberFilterStatus.INACTIVE) {
+        const twoMonthsAgo = new Date();
+        twoMonthsAgo.setMonth(now.getMonth() - 2);
+        where.enrollments = {
+            none: { endDate: { gte: twoMonthsAgo } }
+        };
+      }
+    }
+
+    const [total, members] = await Promise.all([
+      this.prisma.member.count({ where }),
+      this.prisma.member.findMany({
+        where,
+        skip: Number(skip),
+        take: Number(take),
+        include: {
+          enrollments: {
+            where: { status: 'ACTIVE' },
+            orderBy: { endDate: 'desc' },
+            select: { endDate: true }
+          }
+        },
+        orderBy: { lastName: 'asc' },
+      }),
+    ]);
+
+    const now = new Date();
+
+    return {
+      total,
+      skip: Number(skip),
+      take: Number(take),
+      members: members.map(m => {
+        // Un socio está activo si tiene al menos una membresía que venza después de ahora
+        const activeEnrollments = m.enrollments.filter(e => new Date(e.endDate) >= now);
+        const hasActive = activeEnrollments.length > 0;
+        
+        // La fecha de vencimiento que mostramos es la más lejana de las activas, 
+        // o la más reciente de las vencidas si no hay activas.
+        const sortedEnrollments = [...m.enrollments].sort((a, b) => 
+          new Date(b.endDate).getTime() - new Date(a.endDate).getTime()
+        );
+        
+        const lastExpiry = sortedEnrollments[0]?.endDate || null;
+
+        return {
+          ...m,
+          status: m.enrollments.length === 0 ? 'NO_PLAN' : (hasActive ? 'ACTIVE' : 'EXPIRED'),
+          nextExpiryDate: lastExpiry,
+          enrollments: undefined // Limpiar historial
+        };
+      }),
+    };
   }
 
   async findOne(id: number, gymId: number | null): Promise<MemberResponseDto> {
