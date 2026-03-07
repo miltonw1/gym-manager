@@ -1,0 +1,8 @@
+{
+  "track_id": "expiring_members_dashboard_20260307",
+  "type": "feature",
+  "status": "new",
+  "created_at": "2026-03-07T18:47:00Z",
+  "updated_at": "2026-03-07T18:47:00Z",
+  "description": "tenemos la card que muestra cuantos miembros estan proximos a vencer, los cuenta bien, me gustaria que ahora si se clickea nos lleve a una vista con una tabla de los miembros que estan por vencer, con sus datos y que fecha vence en una de las columnas"
+}
