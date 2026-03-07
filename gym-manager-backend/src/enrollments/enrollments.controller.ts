@@ -60,6 +60,14 @@ export class EnrollmentsController {
     return this.enrollmentsService.findOne(id, gymId);
   }
 
+  @Post(':id/renew')
+  renew(
+    @Param('id', ParseIntPipe) id: number,
+    @GetUser('gymId') gymId: number | null,
+  ): Promise<EnrollmentResponseDto> {
+    return this.enrollmentsService.renew(gymId, id);
+  }
+
   @Patch(':id')
   update(
     @Param('id', ParseIntPipe) id: number,
