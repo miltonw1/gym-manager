@@ -3,6 +3,7 @@ import ProtectedRoute from './components/auth/ProtectedRoute';
 import MainLayout from './layouts/MainLayout';
 import LoginPage from './pages/LoginPage';
 import DashboardPage from './pages/DashboardPage';
+import PlansPage from './pages/PlansPage';
 
 function App() {
   return (
@@ -11,8 +12,9 @@ function App() {
       
       <Route element={<ProtectedRoute />}>
         <Route element={<MainLayout />}>
-          <Route path="/dashboard" element={<DashboardPage />} />
-          <Route path="/" element={<Navigate to="/dashboard" replace />} />
+          <Route index element={<Navigate to="/dashboard" replace />} />
+          <Route path="dashboard" element={<DashboardPage />} />
+          <Route path="plans" element={<PlansPage />} />
         </Route>
       </Route>
 
