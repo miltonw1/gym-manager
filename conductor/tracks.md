@@ -18,5 +18,8 @@ This file tracks all major tracks for the project. Each track has its own detail
 
 ---
 
+- [ ] **Track: Frontend Dashboard y Gestión de Socios**
+  *Link: [./tracks/frontend_dashboard_20260306/](./tracks/frontend_dashboard_20260306/)*
+
 - [ ] **Track: Renovación de Membresía (Flexible y Promociones)**
   *Link: [./tracks/enrollment_renewal_20260228/](./tracks/enrollment_renewal_20260228/)*
