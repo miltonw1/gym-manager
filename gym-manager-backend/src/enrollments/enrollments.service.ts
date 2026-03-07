@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException, ForbiddenException, BadRequestException } from '@nestjs/common';
+import { Injectable, NotFoundException, ForbiddenException, BadRequestException, ConflictException } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { CreateEnrollmentDto } from './dto/create-enrollment.dto';
 import { UpdateEnrollmentDto } from './dto/update-enrollment.dto';
@@ -31,48 +31,38 @@ export class EnrollmentsService {
       throw new BadRequestException('The member and the plan must belong to the same gym');
     }
 
-    // 4. Lógica de Fechas (Encadenamiento Automático / Renovación)
-    let startDate = startDateStr ? new Date(startDateStr) : new Date();
-
-    // Buscar si ya tiene una inscripción activa que venza después de "ahora"
-    const lastEnrollment = await this.prisma.enrollment.findFirst({
+    // 4. VALIDACIÓN ESTRICTA: No permitir duplicados en 'create'
+    const existingEnrollment = await this.prisma.enrollment.findFirst({
       where: {
-        memberId,
-        status: EnrollmentStatus.ACTIVE,
-        endDate: { gt: new Date() },
+        memberId: Number(memberId),
+        planId: Number(planId),
       },
-      orderBy: { endDate: 'desc' },
     });
 
-    if (lastEnrollment && !startDateStr) {
-      // Si no se especificó una fecha de inicio manual y hay una activa, encadenamos
-      startDate = new Date(lastEnrollment.endDate);
+    if (existingEnrollment) {
+      throw new ConflictException('Member already has an enrollment for this plan. Use the renewal action instead.');
     }
 
-    const endDate = new Date(startDate);
-    endDate.setDate(startDate.getDate() + plan.durationDays);
+    const finalStartDate = startDateStr ? new Date(startDateStr) : new Date();
+    const finalEndDate = new Date(finalStartDate);
+    finalEndDate.setDate(finalStartDate.getDate() + plan.durationDays);
 
-    // 5. Crear Enrollment y Payment en una transacción
     return this.prisma.$transaction(async (tx) => {
       const enrollment = await tx.enrollment.create({
         data: {
-          memberId,
-          planId,
-          startDate,
-          endDate,
+          memberId: Number(memberId),
+          planId: Number(planId),
+          startDate: finalStartDate,
+          endDate: finalEndDate,
           status: EnrollmentStatus.ACTIVE,
         },
         include: {
-          member: {
-            select: { firstName: true, lastName: true, dni: true }
-          },
-          plan: {
-            select: { name: true, price: true, durationDays: true }
-          }
+          member: { select: { firstName: true, lastName: true, dni: true } },
+          plan: { select: { name: true, price: true, durationDays: true } }
         }
       });
 
-      // Crear el registro de pago
+      // Registrar el pago inicial
       await tx.payment.create({
         data: {
           enrollmentId: enrollment.id,
@@ -81,6 +71,52 @@ export class EnrollmentsService {
       });
 
       return enrollment;
+    });
+  }
+
+  async renew(gymId: number | null, id: number): Promise<EnrollmentResponseDto> {
+    const enrollment = await this.prisma.enrollment.findUnique({
+      where: { id },
+      include: { plan: true, member: true },
+    });
+
+    if (!enrollment) throw new NotFoundException('Enrollment not found');
+    
+    if (gymId && enrollment.member.gymId !== gymId) {
+      throw new ForbiddenException('You do not have access to this enrollment');
+    }
+
+    const plan = enrollment.plan;
+    const currentEndDate = new Date(enrollment.endDate);
+    const now = new Date();
+
+    // Si aún no vence, extendemos desde el vencimiento. Si ya venció, desde hoy.
+    const newStartDate = currentEndDate > now ? currentEndDate : now;
+    const newEndDate = new Date(newStartDate);
+    newEndDate.setDate(newStartDate.getDate() + plan.durationDays);
+
+    return this.prisma.$transaction(async (tx) => {
+      const updated = await tx.enrollment.update({
+        where: { id },
+        data: {
+          endDate: newEndDate,
+          status: EnrollmentStatus.ACTIVE,
+        },
+        include: {
+          member: { select: { firstName: true, lastName: true, dni: true } },
+          plan: { select: { name: true, price: true, durationDays: true } }
+        }
+      });
+
+      // Registrar el nuevo pago de la renovación
+      await tx.payment.create({
+        data: {
+          enrollmentId: updated.id,
+          amount: plan.price,
+        },
+      });
+
+      return updated;
     });
   }
 
@@ -165,7 +201,6 @@ export class EnrollmentsService {
   async update(id: number, gymId: number | null, updateEnrollmentDto: UpdateEnrollmentDto): Promise<EnrollmentResponseDto> {
     const current = await this.findOne(id, gymId);
 
-    // Si se actualiza el plan, recalcular la fecha de fin
     let { endDate } = current;
     if (updateEnrollmentDto.planId && updateEnrollmentDto.planId !== current.planId) {
         const newPlan = await this.prisma.plan.findUnique({ where: { id: updateEnrollmentDto.planId } });
