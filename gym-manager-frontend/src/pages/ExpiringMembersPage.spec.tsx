@@ -5,6 +5,7 @@ import ExpiringMembersPage from './ExpiringMembersPage';
 import { enrollmentsService } from '@/services/enrollments.service';
 import { plansService } from '@/services/plans.service';
 import { useAuthStore } from '@/store/useAuthStore';
+import type { Enrollment } from '@/types/enrollments.types';
 
 vi.mock('@/services/enrollments.service', () => ({
   enrollmentsService: {
@@ -24,7 +25,7 @@ vi.mock('@/store/useAuthStore', () => ({
   useAuthStore: vi.fn(),
 }));
 
-const mockExpiringEnrollments = [
+const mockExpiringEnrollments: Enrollment[] = [
   {
     id: 1,
     memberId: 101,
@@ -142,10 +143,10 @@ describe('ExpiringMembersPage', () => {
 
   it('should paginate results', async () => {
     // Create 25 mock enrollments with unique names that don't overlap (A1, A2...)
-    const manyEnrollments = Array.from({ length: 25 }, (_, i) => ({
+    const manyEnrollments: Enrollment[] = Array.from({ length: 25 }, (_, i) => ({
       ...mockExpiringEnrollments[0],
       id: i + 1,
-      member: { ...mockExpiringEnrollments[0].member, firstName: `User${String.fromCharCode(65 + i)}${i}`, lastName: 'Test' },
+      member: { ...mockExpiringEnrollments[0].member!, firstName: `User${String.fromCharCode(65 + i)}${i}`, lastName: 'Test' },
     }));
     
     vi.mocked(enrollmentsService.findExpiring).mockResolvedValue(manyEnrollments);
