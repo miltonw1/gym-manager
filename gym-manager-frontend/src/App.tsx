@@ -3,6 +3,7 @@ import ProtectedRoute from './components/auth/ProtectedRoute';
 import MainLayout from './layouts/MainLayout';
 import LoginPage from './pages/LoginPage';
 import DashboardPage from './pages/DashboardPage';
+import ExpiringMembersPage from './pages/ExpiringMembersPage';
 import PlansPage from './pages/PlansPage';
 
 function App() {
@@ -14,6 +15,7 @@ function App() {
         <Route element={<MainLayout />}>
           <Route index element={<Navigate to="/dashboard" replace />} />
           <Route path="dashboard" element={<DashboardPage />} />
+          <Route path="dashboard/expiring-members" element={<ExpiringMembersPage />} />
           <Route path="plans" element={<PlansPage />} />
         </Route>
       </Route>

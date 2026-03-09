@@ -30,7 +30,7 @@ import { Checkbox } from '@/components/ui/checkbox';
 
 const loginSchema = z.object({
   email: z.string().min(1, 'Email es requerido').email('Email inválido'),
-  password: z.string().min(1, 'Password es requerido').min(6, 'La contraseña debe tener al menos 6 caracteres'),
+  password: z.string().min(1, 'Password es requerido') /*.min(6, 'La contraseña debe tener al menos 6 caracteres')*/  ,
   rememberMe: z.boolean(),
 });
 
@@ -40,7 +40,7 @@ const LoginForm = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
-  
+
   const navigate = useNavigate();
   const { setAuth } = useAuthStore();
 
@@ -61,7 +61,7 @@ const LoginForm = () => {
         email: values.email,
         password: values.password,
       });
-      
+
       setAuth(response.data.access_token);
       navigate('/dashboard');
     } catch (err: any) {

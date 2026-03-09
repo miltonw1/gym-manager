@@ -5,9 +5,11 @@ import { enrollmentsService } from '@/services/enrollments.service';
 import type { MonthlyRevenue } from '@/types/payments.types';
 import { DollarSign, Calendar, Plus } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { useNavigate } from 'react-router';
 import MembersTable from '@/components/members/MembersTable';
 
 const DashboardPage = () => {
+  const navigate = useNavigate();
   const [revenue, setRevenue] = useState<MonthlyRevenue | null>(null);
   const [expiringCount, setExpiringCount] = useState<number>(0);
   const [loading, setLoading] = useState(true);
@@ -61,7 +63,10 @@ const DashboardPage = () => {
           </CardContent>
         </Card>
 
-        <Card className="cursor-pointer hover:bg-muted/50 transition-colors" onClick={() => console.log('Ver vencimientos')}>
+        <Card 
+          className="cursor-pointer hover:bg-muted/50 transition-colors" 
+          onClick={() => navigate('/dashboard/expiring-members')}
+        >
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Vencimientos Próximos</CardTitle>
             <Calendar className="h-4 w-4 text-muted-foreground" />
