@@ -1,33 +1,33 @@
 # Plan: Expiring Members Dashboard View
 
-## Phase 1: Frontend Routing and Navigation
-- [x] Task: Create the `ExpiringMembersPage` component structure.
+## Phase 1: Frontend Routing and Navigation [checkpoint: 4bbaba6]
+- [x] Task: Create the `ExpiringMembersPage` component structure. 4bbaba6
     - [x] Create `gym-manager-frontend/src/pages/ExpiringMembersPage.tsx`.
     - [x] Add basic layout using `MainLayout`.
-- [x] Task: Configure routing for the new page.
+- [x] Task: Configure routing for the new page. 4bbaba6
     - [x] Add `/dashboard/expiring-members` route in `gym-manager-frontend/src/App.tsx`.
-- [x] Task: Update Dashboard Card to navigate to the new route.
+- [x] Task: Update Dashboard Card to navigate to the new route. 4bbaba6
     - [x] Locate the "Expiring Members" card in `DashboardPage.tsx`.
     - [x] Add navigation logic (e.g., `useNavigate` from `react-router-dom`) on click.
-- [x] Task: Conductor - User Manual Verification 'Phase 1: Frontend Routing and Navigation' (Protocol in workflow.md)
+- [x] Task: Conductor - User Manual Verification 'Phase 1: Frontend Routing and Navigation' (Protocol in workflow.md) 4bbaba6
 
-## Phase 2: Data Fetching and Table Implementation
-- [x] Task: Implement data fetching for expiring members.
+## Phase 2: Data Fetching and Table Implementation [checkpoint: 4bbaba6]
+- [x] Task: Implement data fetching for expiring members. 4bbaba6
     - [x] Update `members.service.ts` to include a method for fetching expiring members (or reuse existing logic if possible).
-- [x] Task: Create the Expiring Members Table component.
+- [x] Task: Create the Expiring Members Table component. 4bbaba6
     - [x] Use `shadcn/ui` table components.
     - [x] Implement columns: Member Name, Expiration Date, Plan Name, Days Remaining.
-- [x] Task: Implement Frontend Pagination.
+- [x] Task: Implement Frontend Pagination. 4bbaba6
     - [x] Add logic to slice the member list into pages of 20.
     - [x] Add pagination controls (Next/Previous).
-- [x] Task: Implement Search and Filtering.
+- [x] Task: Implement Search and Filtering. 4bbaba6
     - [x] Add a search input above the table.
     - [x] Implement client-side filtering by name and plan.
-- [x] Task: Write unit tests for `ExpiringMembersPage` and its filtering/pagination logic.
-- [ ] Task: Conductor - User Manual Verification 'Phase 2: Data Fetching and Table Implementation' (Protocol in workflow.md)
+- [x] Task: Write unit tests for `ExpiringMembersPage` and its filtering/pagination logic. 4bbaba6
+- [x] Task: Conductor - User Manual Verification 'Phase 2: Data Fetching and Table Implementation' (Protocol in workflow.md) 4bbaba6
 
 ## Phase 3: Actions and Integration
-- [ ] Task: Implement "View Profile" action.
+- [~] Task: Implement "View Profile" action.
     - [ ] Add a button/link in each row to navigate to `/members/:id`.
 - [ ] Task: Implement "Quick Renew" action.
     - [ ] Integrate with the existing renewal flow (likely a modal or navigation to a renewal page).
