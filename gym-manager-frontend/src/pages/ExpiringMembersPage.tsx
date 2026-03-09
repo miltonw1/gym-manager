@@ -1,4 +1,4 @@
-import { useEffect, useState, useMemo } from 'react';
+import { useEffect, useState, useMemo, useCallback } from 'react';
 import { enrollmentsService } from '@/services/enrollments.service';
 import type { Enrollment } from '@/types/enrollments.types';
 import ExpiringMembersTable from '@/components/members/ExpiringMembersTable';
@@ -15,22 +15,21 @@ const ExpiringMembersPage = () => {
   const [page, setPage] = useState(0);
   const take = 20;
 
-  useEffect(() => {
-    const fetchExpiring = async () => {
-      try {
-        setLoading(true);
-        // We fetch with a broad range (7 days) and then filter/paginate on the frontend as per spec
-        const data = await enrollmentsService.findExpiring(7);
-        setEnrollments(data);
-      } catch (error) {
-        console.error('Error fetching expiring enrollments:', error);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchExpiring();
+  const fetchExpiring = useCallback(async () => {
+    try {
+      setLoading(true);
+      const data = await enrollmentsService.findExpiring(7);
+      setEnrollments(data);
+    } catch (error) {
+      console.error('Error fetching expiring enrollments:', error);
+    } finally {
+      setLoading(false);
+    }
   }, []);
+
+  useEffect(() => {
+    fetchExpiring();
+  }, [fetchExpiring]);
 
   // Frontend Filtering
   const filteredEnrollments = useMemo(() => {
@@ -83,7 +82,10 @@ const ExpiringMembersPage = () => {
           </div>
         ) : (
           <>
-            <ExpiringMembersTable enrollments={paginatedEnrollments} />
+            <ExpiringMembersTable 
+              enrollments={paginatedEnrollments} 
+              onUpdate={fetchExpiring}
+            />
             
             {/* Pagination Controls */}
             <div className="mt-auto flex items-center justify-between px-2 pt-4 border-t">

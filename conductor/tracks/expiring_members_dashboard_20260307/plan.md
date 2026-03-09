@@ -26,13 +26,13 @@
 - [x] Task: Write unit tests for `ExpiringMembersPage` and its filtering/pagination logic. 4bbaba6
 - [x] Task: Conductor - User Manual Verification 'Phase 2: Data Fetching and Table Implementation' (Protocol in workflow.md) 4bbaba6
 
-## Phase 3: Actions and Integration
-- [~] Task: Implement "View Profile" action.
-    - [ ] Add a button/link in each row to navigate to `/members/:id`.
-- [ ] Task: Implement "Quick Renew" action.
-    - [ ] Integrate with the existing renewal flow (likely a modal or navigation to a renewal page).
-- [ ] Task: Final UI Polish and Mobile Responsiveness.
-    - [ ] Ensure the table is responsive on smaller screens.
-    - [ ] Verify consistent styling with the rest of the app.
-- [ ] Task: Write integration tests for the "Quick Renew" and "View Profile" actions.
-- [ ] Task: Conductor - User Manual Verification 'Phase 3: Actions and Integration' (Protocol in workflow.md)
+## Phase 3: Actions and Integration [checkpoint: 38524]
+- [x] Task: Implement "View Profile" action. 4bbaba6
+    - [x] Add a button/link in each row to navigate to `/members/:id` (Open modal).
+- [x] Task: Implement "Quick Renew" action. 4bbaba6
+    - [x] Integrate with the existing renewal flow (likely a modal or navigation to a renewal page).
+- [x] Task: Final UI Polish and Mobile Responsiveness. 4bbaba6
+    - [x] Ensure the table is responsive on smaller screens.
+    - [x] Verify consistent styling with the rest of the app.
+- [x] Task: Write integration tests for the "Quick Renew" and "View Profile" actions. 4bbaba6
+- [x] Task: Conductor - User Manual Verification 'Phase 3: Actions and Integration' (Protocol in workflow.md) 4bbaba6

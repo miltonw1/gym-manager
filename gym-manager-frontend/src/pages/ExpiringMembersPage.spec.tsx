@@ -3,11 +3,25 @@ import { render, screen, waitFor, fireEvent } from '@testing-library/react';
 import { MemoryRouter } from 'react-router';
 import ExpiringMembersPage from './ExpiringMembersPage';
 import { enrollmentsService } from '@/services/enrollments.service';
+import { plansService } from '@/services/plans.service';
+import { useAuthStore } from '@/store/useAuthStore';
 
 vi.mock('@/services/enrollments.service', () => ({
   enrollmentsService: {
     findExpiring: vi.fn(),
+    findByMember: vi.fn(),
+    renew: vi.fn(),
   },
+}));
+
+vi.mock('@/services/plans.service', () => ({
+  plansService: {
+    findAll: vi.fn(),
+  },
+}));
+
+vi.mock('@/store/useAuthStore', () => ({
+  useAuthStore: vi.fn(),
 }));
 
 const mockExpiringEnrollments = [
@@ -54,6 +68,11 @@ const mockExpiringEnrollments = [
 describe('ExpiringMembersPage', () => {
   beforeEach(() => {
     vi.clearAllMocks();
+    vi.mocked(useAuthStore).mockReturnValue({
+      token: 'test-token',
+    } as any);
+    vi.mocked(plansService.findAll).mockResolvedValue([]);
+    vi.mocked(enrollmentsService.findByMember).mockResolvedValue([]);
   });
 
   it('should render the page title', () => {
@@ -149,5 +168,48 @@ describe('ExpiringMembersPage', () => {
     expect(screen.queryByText(/UserA0/i)).not.toBeInTheDocument();
     expect(screen.getByText(/UserU20/i)).toBeInTheDocument();
     expect(screen.getByText(/UserY24/i)).toBeInTheDocument();
+  });
+
+  it('should open the view modal when clicking the view button', async () => {
+    vi.mocked(enrollmentsService.findExpiring).mockResolvedValue([mockExpiringEnrollments[0]]);
+    
+    render(
+      <MemoryRouter>
+        <ExpiringMembersPage />
+      </MemoryRouter>
+    );
+
+    await waitFor(() => expect(screen.getByText(/John/i)).toBeInTheDocument());
+
+    const viewButton = screen.getByTitle(/ver detalle/i);
+    fireEvent.click(viewButton);
+
+    // Check if the modal title (which usually contains member name) is present
+    // ViewMemberModal likely has "Detalle del Socio" or similar
+    await waitFor(() => {
+      expect(screen.getByText(/detalle del socio/i)).toBeInTheDocument();
+    });
+  });
+
+  it('should call renew service when clicking the quick renew button', async () => {
+    vi.mocked(enrollmentsService.findExpiring).mockResolvedValue([mockExpiringEnrollments[0]]);
+    vi.mocked(enrollmentsService.renew).mockResolvedValue({} as any);
+    
+    render(
+      <MemoryRouter>
+        <ExpiringMembersPage />
+      </MemoryRouter>
+    );
+
+    await waitFor(() => expect(screen.getByText(/John/i)).toBeInTheDocument());
+
+    const renewButton = screen.getByTitle(/renovación rápida/i);
+    fireEvent.click(renewButton);
+
+    expect(enrollmentsService.renew).toHaveBeenCalledWith(mockExpiringEnrollments[0].id);
+    await waitFor(() => {
+      // It should re-fetch expiring list after renewal
+      expect(enrollmentsService.findExpiring).toHaveBeenCalledTimes(2);
+    });
   });
 });
