@@ -25,6 +25,3 @@ This file tracks all major tracks for the project. Each track has its own detail
   *Link: [./tracks/enrollment_renewal_20260228/](./tracks/enrollment_renewal_20260228/)*
 
 ---
-
-- [x] **Track: Vista de Miembros Próximos a Vencer en Dashboard**
-*Link: [./tracks/expiring_members_dashboard_20260307/](./tracks/expiring_members_dashboard_20260307/)*
