@@ -6,7 +6,6 @@ export const membersService = {
     const { data } = await apiClient.get<MembersResponse>('/members', {
       params: {
         ...params,
-        // Convertimos el enum a string para la URL
         status: params?.status === 'ALL' ? undefined : params?.status,
       },
     });
@@ -14,7 +13,7 @@ export const membersService = {
   },
 
   async findOne(id: number): Promise<Member> {
-    const { data } = await apiClient.get<Member>(`/members/${id}`);
+    const { data } = await apiClient.get<Member>('/members/${id}');
     return data;
   },
 
@@ -24,11 +23,23 @@ export const membersService = {
   },
 
   async update(id: number, member: Partial<Member>): Promise<Member> {
-    const { data } = await apiClient.patch<Member>(`/members/${id}`, member);
+    const { data } = await apiClient.patch<Member>('/members/${id}', member);
     return data;
   },
 
   async delete(id: number): Promise<void> {
-    await apiClient.delete(`/members/${id}`);
+    await apiClient.delete('/members/${id}');
+  },
+
+  async getExpired(search?: string): Promise<Member[]> {
+    const { data } = await apiClient.get<Member[]>('/members/expired', {
+      params: { search },
+    });
+    return data;
+  },
+
+  async getExpiredCount(): Promise<number> {
+    const { data } = await apiClient.get<number>('/members/expired-count');
+    return data;
   },
 };
