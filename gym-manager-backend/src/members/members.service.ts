@@ -158,4 +158,82 @@ export class MembersService {
       where,
     });
   }
+
+  async findExpiredMembers(gymId: number, search?: string) {
+    const now = new Date();
+    const thirtyDaysAgo = new Date(now);
+    thirtyDaysAgo.setDate(now.getDate() - 30);
+
+    const where: any = {
+      gymId,
+      enrollments: {
+        some: {
+          endDate: {
+            lt: now,
+            gte: thirtyDaysAgo,
+          },
+          status: 'ACTIVE',
+        },
+        none: {
+          endDate: {
+            gte: now,
+          },
+          status: 'ACTIVE',
+        },
+      },
+    };
+
+    if (search) {
+      where.OR = [
+        { firstName: { contains: search, mode: 'insensitive' } },
+        { lastName: { contains: search, mode: 'insensitive' } },
+        { dni: { contains: search, mode: 'insensitive' } },
+      ];
+    }
+
+    return this.prisma.member.findMany({
+      where,
+      include: {
+        enrollments: {
+          where: {
+            status: 'ACTIVE',
+            endDate: { lt: now },
+          },
+          orderBy: { endDate: 'desc' },
+          take: 1,
+          include: {
+            plan: true,
+          },
+        },
+      },
+      orderBy: { lastName: 'asc' },
+    });
+  }
+
+  async countExpiredMembers(gymId: number) {
+    const now = new Date();
+    const thirtyDaysAgo = new Date(now);
+    thirtyDaysAgo.setDate(now.getDate() - 30);
+
+    return this.prisma.member.count({
+      where: {
+        gymId,
+        enrollments: {
+          some: {
+            endDate: {
+              lt: now,
+              gte: thirtyDaysAgo,
+            },
+            status: 'ACTIVE',
+          },
+          none: {
+            endDate: {
+              gte: now,
+            },
+            status: 'ACTIVE',
+          },
+        },
+      },
+    });
+  }
 }

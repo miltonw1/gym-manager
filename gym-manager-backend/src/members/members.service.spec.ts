@@ -65,13 +65,16 @@ describe('MembersService', () => {
   describe('findAll', () => {
     it('should return all members for a gym', async () => {
       const gymId = 1;
-      const members = [{ id: 1, firstName: 'John', gymId }];
+      const members = [{ id: 1, firstName: 'John', gymId, enrollments: [] }];
+      const queryDto = { skip: 0, take: 10 };
       mockPrismaService.member.findMany.mockResolvedValue(members);
+      // @ts-ignore - count is also called
+      mockPrismaService.member.count = jest.fn().mockResolvedValue(1);
 
-      const result = await service.findAll(gymId);
+      const result = await service.findAll(gymId, queryDto);
 
-      expect(prisma.member.findMany).toHaveBeenCalledWith({ where: { gymId } });
-      expect(result).toEqual(members);
+      expect(prisma.member.findMany).toHaveBeenCalled();
+      expect(result.members).toHaveLength(1);
     });
   });
 
@@ -128,6 +131,44 @@ describe('MembersService', () => {
         where: { id: memberId, gymId }
       });
       expect(result).toEqual(member);
+    });
+  });
+
+  describe('findExpiredMembers', () => {
+    it('should return members whose memberships expired in the last 30 days', async () => {
+      const gymId = 1;
+      const expiredMembers = [{ id: 1, firstName: 'Expired', lastName: 'Member' }];
+      mockPrismaService.member.findMany.mockResolvedValue(expiredMembers);
+
+      const result = await service.findExpiredMembers(gymId);
+
+      expect(prisma.member.findMany).toHaveBeenCalledWith(expect.objectContaining({
+        where: expect.objectContaining({
+          gymId,
+          enrollments: expect.objectContaining({
+            some: expect.objectContaining({
+              status: 'ACTIVE',
+            }),
+            none: expect.objectContaining({
+              status: 'ACTIVE',
+            }),
+          }),
+        }),
+      }));
+      expect(result).toEqual(expiredMembers);
+    });
+  });
+
+  describe('countExpiredMembers', () => {
+    it('should return the count of expired members', async () => {
+      const gymId = 1;
+      // @ts-ignore
+      mockPrismaService.member.count = jest.fn().mockResolvedValue(5);
+
+      const result = await service.countExpiredMembers(gymId);
+
+      expect(prisma.member.count).toHaveBeenCalled();
+      expect(result).toEqual(5);
     });
   });
 });
