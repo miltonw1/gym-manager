@@ -1,3 +1,5 @@
+import type { Enrollment } from './enrollments.types';
+
 export interface Member {
   id: number;
   gymId: number;
@@ -10,6 +12,7 @@ export interface Member {
   active: boolean;
   status?: 'ACTIVE' | 'EXPIRED' | 'NO_PLAN';
   nextExpiryDate?: string | null;
+  enrollments?: Enrollment[];
 }
 
 export interface MembersResponse {
