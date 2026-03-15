@@ -21,20 +21,20 @@ This plan outlines the steps to implement the new "Expired Members" dashboard ca
     - [x] Add `getExpiredMembers` and `getExpiredMembersCount`.
 - [ ] Task: Conductor - User Manual Verification 'Frontend API Service' (Protocol in workflow.md)
 
-## Phase 3: Frontend - Dashboard Card
-- [ ] Task: Create or update the dashboard component to include the "Expired Members" card.
+## Phase 3: Frontend - Dashboard Card [checkpoint: 922f9ae]
+- [x] Task: Create or update the dashboard component 922f9ae to include the "Expired Members" card.
     - [ ] Use `shadcn/ui` Card component.
     - [ ] Implement the count fetching logic using the new service method.
     - [ ] Ensure the card links to `/expired-members`.
     - [ ] Apply "Expired" visual theme (e.g., Red colors).
 - [ ] Task: Conductor - User Manual Verification 'Dashboard Card Integration' (Protocol in workflow.md)
 
-## Phase 4: Frontend - Expired Members Page
-- [ ] Task: Create `ExpiredMembersPage.tsx`.
+## Phase 4: Frontend - Expired Members Page [checkpoint: 922f9ae]
+- [x] Task: Create `ExpiredMembersPage.tsx` 922f9ae
     - [ ] Implement the table with columns: Name/DNI, Expiration Date, Plan Name, and Actions (Renew).
     - [ ] Implement search/filter logic by Name or DNI.
     - [ ] Add the "Renew" button functionality (triggering the existing renewal flow).
-- [ ] Task: Register the new route `/expired-members` in `App.tsx`.
+- [x] Task: Register the new route `/expired-members` in `App.tsx` 922f9ae
 - [ ] Task: Write tests for `ExpiredMembersPage.tsx` using Vitest and React Testing Library.
 - [ ] Task: Conductor - User Manual Verification 'Expired Members View' (Protocol in workflow.md)
 
