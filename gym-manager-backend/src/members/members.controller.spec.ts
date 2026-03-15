@@ -14,6 +14,8 @@ describe('MembersController', () => {
     findOne: jest.fn(),
     update: jest.fn(),
     remove: jest.fn(),
+    findExpiredMembers: jest.fn(),
+    countExpiredMembers: jest.fn(),
   };
 
   beforeEach(async () => {
@@ -49,19 +51,19 @@ describe('MembersController', () => {
     });
   });
 
-  describe('findAll', () => {
-    it('should return all members for a gym', async () => {
-      const gymId = 1;
-      mockMembersService.findAll.mockResolvedValue([]);
-      
-      const result = await controller.findAll(gymId);
-
-      expect(service.findAll).toHaveBeenCalledWith(gymId);
-      expect(result).toEqual([]);
+    describe('findAll', () => {
+      it('should return all members for a gym', async () => {
+        const gymId = 1;
+        const queryDto = { skip: 0, take: 10 };
+        mockMembersService.findAll.mockResolvedValue([]);
+  
+        const result = await controller.findAll(gymId, queryDto);
+  
+        expect(service.findAll).toHaveBeenCalledWith(gymId, queryDto);
+        expect(result).toEqual([]);
+      });
     });
-  });
-
-  describe('findOne', () => {
+    describe('findOne', () => {
     it('should return a member by id', async () => {
       const gymId = 1;
       const memberId = 1;
@@ -99,6 +101,30 @@ describe('MembersController', () => {
 
       expect(service.remove).toHaveBeenCalledWith(memberId, gymId);
       expect(result).toEqual({ id: memberId, gymId });
+    });
+  });
+
+  describe('getExpiredMembers', () => {
+    it('should return expired members', async () => {
+      const gymId = 1;
+      mockMembersService.findExpiredMembers.mockResolvedValue([]);
+
+      const result = await controller.getExpiredMembers(gymId, '');
+
+      expect(service.findExpiredMembers).toHaveBeenCalledWith(gymId, '');
+      expect(result).toEqual([]);
+    });
+  });
+
+  describe('getExpiredMembersCount', () => {
+    it('should return the count of expired members', async () => {
+      const gymId = 1;
+      mockMembersService.countExpiredMembers.mockResolvedValue(5);
+
+      const result = await controller.getExpiredMembersCount(gymId);
+
+      expect(service.countExpiredMembers).toHaveBeenCalledWith(gymId);
+      expect(result).toEqual(5);
     });
   });
 });

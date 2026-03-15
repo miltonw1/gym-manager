@@ -59,4 +59,25 @@ export class MembersController {
   ): Promise<MemberResponseDto> {
     return this.membersService.remove(id, tokenGymId);
   }
+
+  @Get('expired')
+  getExpiredMembers(
+    @GetUser('gymId') tokenGymId: number | null,
+    @Query('search') search?: string,
+  ) {
+    if (!tokenGymId) {
+      throw new ConflictException('A gymId must be associated with the user');
+    }
+    return this.membersService.findExpiredMembers(tokenGymId, search);
+  }
+
+  @Get('expired-count')
+  getExpiredMembersCount(
+    @GetUser('gymId') tokenGymId: number | null,
+  ) {
+    if (!tokenGymId) {
+      throw new ConflictException('A gymId must be associated with the user');
+    }
+    return this.membersService.countExpiredMembers(tokenGymId);
+  }
 }
