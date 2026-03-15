@@ -3,15 +3,15 @@
 This plan outlines the steps to implement the new "Expired Members" dashboard card and dedicated view, following the pattern of the "Expiring Members" feature.
 
 ## Phase 1: Backend - Data Access for Expired Members
-- [ ] Task: Update `MembersService` to include a method for fetching expired members (last 30 days).
-    - [ ] Write unit tests in `members.service.spec.ts` for `findExpiredMembers`.
-    - [ ] Implement `findExpiredMembers` using Prisma (filter: `endDate < now` AND `endDate >= now - 30 days`).
+- [x] Task: Update `MembersService` to include a method for fetching expired members (last 30 days). 5bed976
+    - [x] Write unit tests in `members.service.spec.ts` for `findExpiredMembers`.
+    - [x] Implement `findExpiredMembers` using Prisma (filter: `endDate < now` AND `endDate >= now - 30 days`).
 - [ ] Task: Expose the expired members data via `MembersController`.
     - [ ] Write unit tests in `members.controller.spec.ts` for `getExpiredMembers`.
     - [ ] Implement `GET /members/expired` endpoint.
-- [ ] Task: Update `MembersService` to include a method for counting expired members.
-    - [ ] Write unit tests for `countExpiredMembers`.
-    - [ ] Implement `countExpiredMembers`.
+- [x] Task: Update `MembersService` to include a method for counting expired members. 5bed976
+    - [x] Write unit tests for `countExpiredMembers`.
+    - [x] Implement `countExpiredMembers`.
     - [ ] Expose via `GET /members/expired/count`.
 - [ ] Task: Conductor - User Manual Verification 'Backend Expired Members API' (Protocol in workflow.md)
 
