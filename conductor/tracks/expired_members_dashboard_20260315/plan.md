@@ -15,10 +15,10 @@ This plan outlines the steps to implement the new "Expired Members" dashboard ca
     - [x] Expose via `GET /members/expired/count`. 879cfab
 - [x] Task: Conductor - User Manual Verification 'Backend Expired Members API' (Protocol in workflow.md) db9703d
 
-## Phase 2: Frontend - API Service and Types
-- [ ] Task: Define types for Expired Member data in `src/types/members.types.ts` (if needed) or reuse existing ones.
-- [ ] Task: Update `members.service.ts` to include methods for fetching expired members and their count.
-    - [ ] Add `getExpiredMembers` and `getExpiredMembersCount`.
+## Phase 2: Frontend - API Service and Types [checkpoint: 8044d16]
+- [x] Task: Define types for Expired Member data 8044d16 in `src/types/members.types.ts` (if needed) or reuse existing ones.
+- [x] Task: Update `members.service.ts` to include methods for fetching expired members 8044d16 and their count.
+    - [x] Add `getExpiredMembers` and `getExpiredMembersCount`.
 - [ ] Task: Conductor - User Manual Verification 'Frontend API Service' (Protocol in workflow.md)
 
 ## Phase 3: Frontend - Dashboard Card
