@@ -2,9 +2,9 @@ import { useEffect, useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { paymentsService } from '@/services/payments.service';
 import { enrollmentsService } from '@/services/enrollments.service';
+import { membersService } from '@/services/members.service';
 import type { MonthlyRevenue } from '@/types/payments.types';
-import { DollarSign, Calendar, Plus } from 'lucide-react';
-import { Button } from '@/components/ui/button';
+import { DollarSign, Calendar, AlertTriangle } from 'lucide-react';
 import { useNavigate } from 'react-router';
 import MembersTable from '@/components/members/MembersTable';
 
@@ -12,18 +12,21 @@ const DashboardPage = () => {
   const navigate = useNavigate();
   const [revenue, setRevenue] = useState<MonthlyRevenue | null>(null);
   const [expiringCount, setExpiringCount] = useState<number>(0);
+  const [expiredCount, setExpiredCount] = useState<number>(0);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchStats = async () => {
       try {
         setLoading(true);
-        const [revenueData, expiringData] = await Promise.all([
+        const [revenueData, expiringData, expiredCountData] = await Promise.all([
           paymentsService.getRevenue(),
-          enrollmentsService.findExpiring(7), // Pr贸ximos 7 d铆as
+          enrollmentsService.findExpiring(7),
+          membersService.getExpiredCount(),
         ]);
         setRevenue(revenueData);
         setExpiringCount(expiringData.length);
+        setExpiredCount(expiredCountData);
       } catch (error) {
         console.error('Error fetching dashboard stats:', error);
       } finally {
@@ -42,49 +45,65 @@ const DashboardPage = () => {
   };
 
   return (
-    <div className="flex flex-1 flex-col gap-4 p-4 pt-0">
-      <div className="flex items-center justify-between py-4">
-        <h1 className="text-2xl font-bold tracking-tight">Dashboard</h1>
+    <div className='flex flex-1 flex-col gap-4 p-4 pt-0'>
+      <div className='flex items-center justify-between py-4'>
+        <h1 className='text-2xl font-bold tracking-tight'>Dashboard</h1>
       </div>
 
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+      <div className='grid gap-4 md:grid-cols-2 lg:grid-cols-4'>
         <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Recaudaci贸n del Mes</CardTitle>
-            <DollarSign className="h-4 w-4 text-muted-foreground" />
+          <CardHeader className='flex flex-row items-center justify-between space-y-0 pb-2'>
+            <CardTitle className='text-sm font-medium'>Recaudaci髇 del Mes</CardTitle>
+            <DollarSign className='h-4 w-4 text-muted-foreground' />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">
+            <div className='text-2xl font-bold'>
               {loading ? '...' : formatCurrency(revenue?.totalRevenue || 0)}
             </div>
-            <p className="text-xs text-muted-foreground">
+            <p className='text-xs text-muted-foreground'>
               {loading ? '' : `${revenue?.transactionCount || 0} transacciones registradas`}
             </p>
           </CardContent>
         </Card>
 
-        <Card 
-          className="cursor-pointer hover:bg-muted/50 transition-colors" 
+        <Card
+          className='cursor-pointer hover:bg-muted/50 transition-colors'
           onClick={() => navigate('/dashboard/expiring-members')}
         >
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Vencimientos Pr贸ximos</CardTitle>
-            <Calendar className="h-4 w-4 text-muted-foreground" />
+          <CardHeader className='flex flex-row items-center justify-between space-y-0 pb-2'>
+            <CardTitle className='text-sm font-medium'>Vencimientos Pr髕imos</CardTitle>
+            <Calendar className='h-4 w-4 text-muted-foreground' />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{loading ? '...' : expiringCount}</div>
-            <p className="text-xs text-muted-foreground">
-              Socios con membres铆a por vencer en los pr贸ximos 7 d铆as
+            <div className='text-2xl font-bold'>{loading ? '...' : expiringCount}</div>
+            <p className='text-xs text-muted-foreground'>
+              Socios con membres韆 por vencer en los pr髕imos 7 d韆s
+            </p>
+          </CardContent>
+        </Card>
+
+        <Card
+          className='cursor-pointer border-red-200 hover:bg-red-50/50 transition-colors'
+          onClick={() => navigate('/dashboard/expired-members')}
+        >
+          <CardHeader className='flex flex-row items-center justify-between space-y-0 pb-2'>
+            <CardTitle className='text-sm font-medium text-red-600'>Vencidos (30d)</CardTitle>
+            <AlertTriangle className='h-4 w-4 text-red-500' />
+          </CardHeader>
+          <CardContent>
+            <div className='text-2xl font-bold text-red-700'>{loading ? '...' : expiredCount}</div>
+            <p className='text-xs text-red-600/80'>
+              Membres韆s que vencieron en los 鷏timos 30 d韆s
             </p>
           </CardContent>
         </Card>
       </div>
 
-      <div className="mt-4 flex-1 rounded-xl bg-background border p-6">
-        <div className="flex items-center justify-between mb-6">
-          <h2 className="text-xl font-semibold tracking-tight">Gesti贸n de Socios</h2>
+      <div className='mt-4 flex-1 rounded-xl bg-background border p-6'>
+        <div className='flex items-center justify-between mb-6'>
+          <h2 className='text-xl font-semibold tracking-tight'>Gesti髇 de Socios</h2>
         </div>
-        
+
         <MembersTable />
       </div>
     </div>
