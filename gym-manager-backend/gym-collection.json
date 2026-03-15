@@ -394,6 +394,50 @@
             },
             "metaSortKey": -1708041600000,
             "_type": "request"
+        },
+        {
+            "_id": "req_get_expired_members",
+            "parentId": "fld_members",
+            "modified": 1742071800000,
+            "created": 1742071800000,
+            "url": "{{ _.base_url }}/members/expired",
+            "name": "Get Expired Members",
+            "description": "Obtiene los socios cuya membresía venció en los últimos 30 días",
+            "method": "GET",
+            "body": {},
+            "parameters": [
+                {
+                    "name": "search",
+                    "value": "",
+                    "disabled": true
+                }
+            ],
+            "headers": [],
+            "authentication": {
+                "type": "bearer",
+                "token": "{{ _.jwt_token }}"
+            },
+            "metaSortKey": -1708041700000,
+            "_type": "request"
+        },
+        {
+            "_id": "req_get_expired_members_count",
+            "parentId": "fld_members",
+            "modified": 1742071800000,
+            "created": 1742071800000,
+            "url": "{{ _.base_url }}/members/expired-count",
+            "name": "Get Expired Members Count",
+            "description": "Obtiene el conteo de socios con membresía vencida en los últimos 30 días",
+            "method": "GET",
+            "body": {},
+            "parameters": [],
+            "headers": [],
+            "authentication": {
+                "type": "bearer",
+                "token": "{{ _.jwt_token }}"
+            },
+            "metaSortKey": -1708041800000,
+            "_type": "request"
         }
     ]
 }
