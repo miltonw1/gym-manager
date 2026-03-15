@@ -27,39 +27,6 @@ export class MembersController {
     return this.membersService.create(finalGymId, createMemberDto);
   }
 
-  @Get()
-  findAll(
-    @GetUser('gymId') tokenGymId: number | null,
-    @Query() queryDto: GetMembersQueryDto,
-  ) {
-    return this.membersService.findAll(tokenGymId, queryDto);
-  }
-
-  @Get(':id')
-  findOne(
-    @Param('id', ParseIntPipe) id: number,
-    @GetUser('gymId') tokenGymId: number | null,
-  ): Promise<MemberResponseDto> {
-    return this.membersService.findOne(id, tokenGymId);
-  }
-
-  @Patch(':id')
-  update(
-    @Param('id', ParseIntPipe) id: number,
-    @GetUser('gymId') tokenGymId: number | null,
-    @Body() updateMemberDto: UpdateMemberDto,
-  ): Promise<MemberResponseDto> {
-    return this.membersService.update(id, tokenGymId, updateMemberDto);
-  }
-
-  @Delete(':id')
-  remove(
-    @Param('id', ParseIntPipe) id: number,
-    @GetUser('gymId') tokenGymId: number | null,
-  ): Promise<MemberResponseDto> {
-    return this.membersService.remove(id, tokenGymId);
-  }
-
   @Get('expired')
   getExpiredMembers(
     @GetUser('gymId') tokenGymId: number | null,
@@ -79,5 +46,21 @@ export class MembersController {
       throw new ConflictException('A gymId must be associated with the user');
     }
     return this.membersService.countExpiredMembers(tokenGymId);
+  }
+
+  @Get()
+  findAll(
+    @GetUser('gymId') tokenGymId: number | null,
+    @Query() queryDto: GetMembersQueryDto,
+  ) {
+    return this.membersService.findAll(tokenGymId, queryDto);
+  }
+
+  @Get(':id')
+  findOne(
+    @Param('id', ParseIntPipe) id: number,
+    @GetUser('gymId') tokenGymId: number | null,
+  ): Promise<MemberResponseDto> {
+    return this.membersService.findOne(id, tokenGymId);
   }
 }

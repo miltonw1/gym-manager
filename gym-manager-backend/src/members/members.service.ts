@@ -172,13 +172,6 @@ export class MembersService {
             lt: now,
             gte: thirtyDaysAgo,
           },
-          status: 'ACTIVE',
-        },
-        none: {
-          endDate: {
-            gte: now,
-          },
-          status: 'ACTIVE',
         },
       },
     };
@@ -196,11 +189,9 @@ export class MembersService {
       include: {
         enrollments: {
           where: {
-            status: 'ACTIVE',
-            endDate: { lt: now },
+            endDate: { lt: now, gte: thirtyDaysAgo },
           },
           orderBy: { endDate: 'desc' },
-          take: 1,
           include: {
             plan: true,
           },
@@ -224,13 +215,6 @@ export class MembersService {
               lt: now,
               gte: thirtyDaysAgo,
             },
-            status: 'ACTIVE',
-          },
-          none: {
-            endDate: {
-              gte: now,
-            },
-            status: 'ACTIVE',
           },
         },
       },
