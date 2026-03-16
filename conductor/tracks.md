@@ -26,7 +26,7 @@ This file tracks all major tracks for the project. Each track has its own detail
 
 ---
 
-- [ ] **Track: Dashboard y Vista de Miembros Expirados**
+- [~] **Track: Dashboard y Vista de Miembros Expirados**
   *Link: [./tracks/expired_members_dashboard_20260315/](./tracks/expired_members_dashboard_20260315/)*
 
 ---

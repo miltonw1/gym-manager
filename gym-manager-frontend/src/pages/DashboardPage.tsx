@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+锘縤mport { useEffect, useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { paymentsService } from '@/services/payments.service';
 import { enrollmentsService } from '@/services/enrollments.service';
@@ -53,7 +53,7 @@ const DashboardPage = () => {
       <div className='grid gap-4 md:grid-cols-2 lg:grid-cols-4'>
         <Card>
           <CardHeader className='flex flex-row items-center justify-between space-y-0 pb-2'>
-            <CardTitle className='text-sm font-medium'>Recaudaci髇 del Mes</CardTitle>
+            <CardTitle className='text-sm font-medium'>Recaudaci贸n del Mes</CardTitle>
             <DollarSign className='h-4 w-4 text-muted-foreground' />
           </CardHeader>
           <CardContent>
@@ -71,13 +71,13 @@ const DashboardPage = () => {
           onClick={() => navigate('/dashboard/expiring-members')}
         >
           <CardHeader className='flex flex-row items-center justify-between space-y-0 pb-2'>
-            <CardTitle className='text-sm font-medium'>Vencimientos Pr髕imos</CardTitle>
+            <CardTitle className='text-sm font-medium'>Vencimientos Pr贸ximos</CardTitle>
             <Calendar className='h-4 w-4 text-muted-foreground' />
           </CardHeader>
           <CardContent>
             <div className='text-2xl font-bold'>{loading ? '...' : expiringCount}</div>
             <p className='text-xs text-muted-foreground'>
-              Socios con membres韆 por vencer en los pr髕imos 7 d韆s
+              Socios con membres铆a por vencer en los pr贸ximos 7 d铆as
             </p>
           </CardContent>
         </Card>
@@ -93,7 +93,7 @@ const DashboardPage = () => {
           <CardContent>
             <div className='text-2xl font-bold text-red-700'>{loading ? '...' : expiredCount}</div>
             <p className='text-xs text-red-600/80'>
-              Membres韆s que vencieron en los 鷏timos 30 d韆s
+              Membres铆as que vencieron en los 煤ltimos 30 d铆as
             </p>
           </CardContent>
         </Card>
@@ -101,7 +101,7 @@ const DashboardPage = () => {
 
       <div className='mt-4 flex-1 rounded-xl bg-background border p-6'>
         <div className='flex items-center justify-between mb-6'>
-          <h2 className='text-xl font-semibold tracking-tight'>Gesti髇 de Socios</h2>
+          <h2 className='text-xl font-semibold tracking-tight'>Gesti贸n de Socios</h2>
         </div>
 
         <MembersTable />
