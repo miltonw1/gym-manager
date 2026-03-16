@@ -16,5 +16,5 @@
 
 ## Phase 4: Gestión Financiera (Facturación Mensual) [checkpoint: df3ba9f]
 - [x] Task: Implementar endpoint para ver la recaudación acumulada del mes en curso. df3ba9f
-- [ ] Task: Crear modelo `MonthlyRevenue` en el schema para históricos.
+- [~] Task: Crear modelo `MonthlyRevenue` en el schema para históricos.
 - [ ] Task: Crear lógica de "Cierre de Mes" (Manual o Automática).

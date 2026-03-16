@@ -1,4 +1,4 @@
-import { useState } from 'react';
+﻿import { useState } from 'react';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Button } from '@/components/ui/button';
 import { Eye, RefreshCw, Loader2 } from 'lucide-react';
@@ -7,6 +7,7 @@ import { es } from 'date-fns/locale';
 import type { Member } from '@/types/members.types';
 import ViewMemberModal from './ViewMemberModal';
 import { enrollmentsService } from '@/services/enrollments.service';
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 
 interface ExpiredMembersTableProps {
   members: Member[];
@@ -17,12 +18,14 @@ const ExpiredMembersTable = ({ members, onUpdate }: ExpiredMembersTableProps) =>
   const [selectedMember, setSelectedMember] = useState<Member | null>(null);
   const [isViewModalOpen, setIsViewModalOpen] = useState(false);
   const [renewingId, setRenewingId] = useState<number | null>(null);
+  const [isConfirmOpen, setIsConfirmOpen] = useState(false);
+  const [enrollmentToRenew, setEnrollmentToRenew] = useState<{ id: number; name: string } | null>(null);
 
   const getDaysAgo = (endDate: string) => {
     const days = Math.abs(differenceInDays(parseISO(endDate), new Date()));
-    if (days === 0) return 'Venci� hoy';
-    if (days === 1) return 'Venci� ayer';
-    return `Hace ${days} d�as`;
+    if (days === 0) return 'Venció hoy';
+    if (days === 1) return 'Venció ayer';
+    return `Hace ${days} días`;
   };
 
   const handleOpenViewModal = (member: Member) => {
@@ -30,16 +33,25 @@ const ExpiredMembersTable = ({ members, onUpdate }: ExpiredMembersTableProps) =>
     setIsViewModalOpen(true);
   };
 
-  const handleQuickRenew = async (enrollmentId: number) => {
+  const handleOpenConfirm = (enrollmentId: number, memberName: string) => {
+    setEnrollmentToRenew({ id: enrollmentId, name: memberName });
+    setIsConfirmOpen(true);
+  };
+
+  const handleConfirmRenew = async () => {
+    if (!enrollmentToRenew) return;
+    
     try {
-      setRenewingId(enrollmentId);
-      await enrollmentsService.renew(enrollmentId);
+      setRenewingId(enrollmentToRenew.id);
+      setIsConfirmOpen(false);
+      await enrollmentsService.renew(enrollmentToRenew.id);
       if (onUpdate) await onUpdate();
     } catch (error) {
       console.error('Error al renovar:', error);
-      alert('Hubo un error al procesar la renovaci�n.');
+      alert('Hubo un error al procesar la renovación.');
     } finally {
       setRenewingId(null);
+      setEnrollmentToRenew(null);
     }
   };
 
@@ -77,9 +89,9 @@ const ExpiredMembersTable = ({ members, onUpdate }: ExpiredMembersTableProps) =>
                       <Button
                         variant='ghost'
                         size='icon'
-                        title='Renovaci�n R�pida'
+                        title='Renovación Rápida'
                         disabled={isRenewing}
-                        onClick={() => handleQuickRenew(lastEnrollment.id)}
+                        onClick={() => handleOpenConfirm(lastEnrollment.id, `${member.firstName} ${member.lastName}`)}
                       >
                         {isRenewing ? (
                           <Loader2 className='h-4 w-4 animate-spin text-primary' />
@@ -110,6 +122,22 @@ const ExpiredMembersTable = ({ members, onUpdate }: ExpiredMembersTableProps) =>
         onClose={() => setIsViewModalOpen(false)}
         onUpdate={() => onUpdate?.()}
       />
+
+      <Dialog open={isConfirmOpen} onOpenChange={setIsConfirmOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Confirmar Renovación</DialogTitle>
+            <DialogDescription>
+              ¿Estás seguro de que deseas renovar la membresía de {enrollmentToRenew?.name}?
+              Esta acción inscribirá al socio nuevamente en el mismo plan que tenía.
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter>
+            <Button variant='outline' onClick={() => setIsConfirmOpen(false)}>Cancelar</Button>
+            <Button onClick={handleConfirmRenew}>Confirmar Renovación</Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };

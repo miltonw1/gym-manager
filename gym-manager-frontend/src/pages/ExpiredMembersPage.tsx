@@ -1,4 +1,4 @@
-import { useEffect, useState, useMemo, useCallback } from 'react';
+ï»¿import { useEffect, useState, useMemo, useCallback } from 'react';
 import { membersService } from '@/services/members.service';
 import type { Member } from '@/types/members.types';
 import ExpiredMembersTable from '@/components/members/ExpiredMembersTable';
@@ -58,7 +58,7 @@ const ExpiredMembersPage = () => {
         <Button variant='ghost' size='icon' onClick={() => navigate(-1)}>
           <ArrowLeft className='h-5 w-5' />
         </Button>
-        <h1 className='text-2xl font-bold tracking-tight'>Membresías Vencidas (Últimos 30 días)</h1>
+        <h1 className='text-2xl font-bold tracking-tight'>MembresÃ­as Vencidas (Ãšltimos 30 dÃ­as)</h1>
       </div>
 
       <div className='flex flex-col gap-4 md:flex-row md:items-center'>
@@ -80,7 +80,7 @@ const ExpiredMembersPage = () => {
           <div className='flex justify-center py-8 text-muted-foreground'>
             {search
               ? `No se encontraron resultados para '${search}'`
-              : 'No se encontraron membresías vencidas en los últimos 30 días.'}
+              : 'No se encontraron membresÃ­as vencidas en los Ãºltimos 30 dÃ­as.'}
           </div>
         ) : (
           <>
@@ -105,7 +105,7 @@ const ExpiredMembersPage = () => {
                     Anterior
                   </Button>
                   <div className='text-sm font-medium'>
-                    Página {page + 1} de {totalPages || 1}
+                    PÃ¡gina {page + 1} de {totalPages || 1}
                   </div>
                   <Button
                     variant='outline'
