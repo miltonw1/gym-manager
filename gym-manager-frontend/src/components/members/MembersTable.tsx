@@ -102,6 +102,8 @@ const MembersTable = () => {
     switch (member.status) {
       case 'ACTIVE':
         return <Badge className="bg-green-600 hover:bg-green-700">Activo</Badge>;
+      case 'EXPIRING_SOON':
+        return <Badge className="bg-yellow-500 hover:bg-yellow-600 text-white">Próximo a vencer</Badge>;
       case 'EXPIRED':
         return <Badge variant="destructive">Vencido</Badge>;
       case 'NO_PLAN':
