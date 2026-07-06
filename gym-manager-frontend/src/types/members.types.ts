@@ -13,6 +13,7 @@ export interface Member {
   status?: 'ACTIVE' | 'EXPIRING_SOON' | 'EXPIRED' | 'NO_PLAN';
   nextExpiryDate?: string | null;
   nearestExpiryDate?: string | null;
+  expiredEnrollmentCount?: number;
   enrollments?: Enrollment[];
 }
 

@@ -99,11 +99,14 @@ const MembersTable = () => {
   const totalPages = Math.ceil(total / take);
 
   const getStatusBadge = (member: Member) => {
+    const expiredCount = member.expiredEnrollmentCount ?? 0;
+    const suffix = expiredCount > 0 ? ` (+${expiredCount} vencidas)` : '';
+
     switch (member.status) {
       case 'ACTIVE':
-        return <Badge className="bg-green-600 hover:bg-green-700">Activo</Badge>;
+        return <Badge className="bg-green-600 hover:bg-green-700">Activo{suffix}</Badge>;
       case 'EXPIRING_SOON':
-        return <Badge className="bg-yellow-500 hover:bg-yellow-600 text-white">Próximo a vencer</Badge>;
+        return <Badge className="bg-yellow-500 hover:bg-yellow-600 text-white">Próximo a vencer{suffix}</Badge>;
       case 'EXPIRED':
         return <Badge variant="destructive">Vencido</Badge>;
       case 'NO_PLAN':

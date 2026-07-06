@@ -96,6 +96,7 @@ export class MembersService {
       take: Number(take),
       members: members.map(m => {
         const activeEnrollments = m.enrollments.filter(e => new Date(e.endDate) >= now);
+        const expiredEnrollments = m.enrollments.filter(e => new Date(e.endDate) < now);
         const hasActive = activeEnrollments.length > 0;
 
         const sortedDesc = [...m.enrollments].sort((a, b) =>
@@ -126,6 +127,7 @@ export class MembersService {
           status,
           nextExpiryDate: lastExpiry,
           nearestExpiryDate: nearestExpiry,
+          expiredEnrollmentCount: expiredEnrollments.length,
           enrollments: undefined
         };
       }),
