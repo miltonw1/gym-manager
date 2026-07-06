@@ -185,7 +185,11 @@ const ViewMemberModal = ({ member, isOpen, onClose, onUpdate }: ViewMemberModalP
                 </div>
               ) : (
                 enrollments.map((enrollment) => {
-                  const isExpired = new Date(enrollment.endDate) < new Date();
+                  const now = new Date();
+                  const isExpired = new Date(enrollment.endDate) < now;
+                  const sevenDaysFromNow = new Date(now);
+                  sevenDaysFromNow.setDate(now.getDate() + 7);
+                  const isExpiringSoon = !isExpired && new Date(enrollment.endDate) <= sevenDaysFromNow;
                   const isRenewing = renewingId === enrollment.id;
 
                   return (
@@ -198,6 +202,8 @@ const ViewMemberModal = ({ member, isOpen, onClose, onUpdate }: ViewMemberModalP
                           <span className="font-bold text-sm">{enrollment.plan?.name}</span>
                           {isExpired ? (
                             <Badge variant="destructive" className="text-[10px] h-4">Vencido</Badge>
+                          ) : isExpiringSoon ? (
+                            <Badge className="bg-yellow-500 text-white text-[10px] h-4">Próximo a vencer</Badge>
                           ) : (
                             <Badge className="bg-green-600 text-[10px] h-4">Activo</Badge>
                           )}
