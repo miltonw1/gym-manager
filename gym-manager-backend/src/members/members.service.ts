@@ -87,29 +87,46 @@ export class MembersService {
     ]);
 
     const now = new Date();
+    const sevenDaysFromNow = new Date(now);
+    sevenDaysFromNow.setDate(now.getDate() + 7);
 
     return {
       total,
       skip: Number(skip),
       take: Number(take),
       members: members.map(m => {
-        // Un socio está activo si tiene al menos una membresía que venza después de ahora
         const activeEnrollments = m.enrollments.filter(e => new Date(e.endDate) >= now);
         const hasActive = activeEnrollments.length > 0;
-        
-        // La fecha de vencimiento que mostramos es la más lejana de las activas, 
-        // o la más reciente de las vencidas si no hay activas.
-        const sortedEnrollments = [...m.enrollments].sort((a, b) => 
+
+        const sortedDesc = [...m.enrollments].sort((a, b) =>
           new Date(b.endDate).getTime() - new Date(a.endDate).getTime()
         );
-        
-        const lastExpiry = sortedEnrollments[0]?.endDate || null;
+        const lastExpiry = sortedDesc[0]?.endDate || null;
+
+        const sortedAsc = [...activeEnrollments].sort((a, b) =>
+          new Date(a.endDate).getTime() - new Date(b.endDate).getTime()
+        );
+        const nearestExpiry = sortedAsc[0]?.endDate || null;
+
+        const isExpiringSoon = hasActive && nearestExpiry && new Date(nearestExpiry) <= sevenDaysFromNow;
+
+        let status: string;
+        if (m.enrollments.length === 0) {
+          status = 'NO_PLAN';
+        } else if (!hasActive) {
+          status = 'EXPIRED';
+        } else if (isExpiringSoon) {
+          status = 'EXPIRING_SOON';
+        } else {
+          status = 'ACTIVE';
+        }
 
         return {
           ...m,
-          status: m.enrollments.length === 0 ? 'NO_PLAN' : (hasActive ? 'ACTIVE' : 'EXPIRED'),
+          status,
           nextExpiryDate: lastExpiry,
-          enrollments: undefined // Limpiar historial
+          nearestExpiryDate: nearestExpiry,
+          enrollments: undefined
         };
       }),
     };
