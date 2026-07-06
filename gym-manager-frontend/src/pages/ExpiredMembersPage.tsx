@@ -55,7 +55,7 @@ const ExpiredMembersPage = () => {
   return (
     <div className='flex flex-1 flex-col gap-4 p-4 pt-0'>
       <div className='flex items-center gap-4 py-4'>
-        <Button variant='ghost' size='icon' onClick={() => navigate(-1)}>
+        <Button variant='ghost' size='icon' onClick={() => navigate('/dashboard')}>
           <ArrowLeft className='h-5 w-5' />
         </Button>
         <h1 className='text-2xl font-bold tracking-tight'>Membresías Vencidas (Últimos 30 días)</h1>
