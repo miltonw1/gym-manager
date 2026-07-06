@@ -31,16 +31,17 @@ export class EnrollmentsService {
       throw new BadRequestException('The member and the plan must belong to the same gym');
     }
 
-    // 4. VALIDACIÓN ESTRICTA: No permitir duplicados en 'create'
+    // 4. VALIDACIÓN: No permitir duplicados ACTIVOS
     const existingEnrollment = await this.prisma.enrollment.findFirst({
       where: {
         memberId: Number(memberId),
         planId: Number(planId),
+        status: EnrollmentStatus.ACTIVE,
       },
     });
 
     if (existingEnrollment) {
-      throw new ConflictException('Member already has an enrollment for this plan. Use the renewal action instead.');
+      throw new ConflictException('Member already has an active enrollment for this plan. Use the renewal action instead.');
     }
 
     const finalStartDate = startDateStr ? new Date(startDateStr) : new Date();
@@ -127,7 +128,7 @@ export class EnrollmentsService {
       },
       include: {
         member: { select: { firstName: true, lastName: true, dni: true } },
-        plan: { select: { name: true, price: true } },
+        plan: { select: { name: true, price: true, durationDays: true } },
       },
       orderBy: { createdAt: 'desc' },
     });
@@ -172,7 +173,7 @@ export class EnrollmentsService {
       },
       include: {
         member: { select: { firstName: true, lastName: true, dni: true } },
-        plan: { select: { name: true, price: true } },
+        plan: { select: { name: true, price: true, durationDays: true } },
       },
       orderBy: { endDate: 'asc' },
     });

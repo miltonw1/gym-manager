@@ -9,7 +9,7 @@ import {
 } from '@/components/ui/table';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Pencil, Plus, Loader2, Trash2, Search } from 'lucide-react';
+import { Pencil, Plus, Loader2, Search } from 'lucide-react';
 import { plansService } from '@/services/plans.service';
 import type { Plan } from '@/services/plans.service';
 import PlanModal from '@/components/plans/PlanModal';

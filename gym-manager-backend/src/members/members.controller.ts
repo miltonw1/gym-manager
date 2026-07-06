@@ -35,7 +35,7 @@ export class MembersController {
     if (!tokenGymId) {
       throw new ConflictException('A gymId must be associated with the user');
     }
-    return this.membersService.findExpiredMembers(tokenGymId, search);
+    return this.membersService.findRecentlyExpiredMembers(tokenGymId, search);
   }
 
   @Get('expired-count')
@@ -45,7 +45,7 @@ export class MembersController {
     if (!tokenGymId) {
       throw new ConflictException('A gymId must be associated with the user');
     }
-    return this.membersService.countExpiredMembers(tokenGymId);
+    return this.membersService.countRecentlyExpiredMembers(tokenGymId);
   }
 
   @Get()
