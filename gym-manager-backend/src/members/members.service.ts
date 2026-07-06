@@ -121,7 +121,7 @@ export class MembersService {
       where.gymId = gymId;
     }
 
-    const member = await this.prisma.member.findUnique({
+    const member = await this.prisma.member.findFirst({
       where,
     });
 
@@ -135,13 +135,8 @@ export class MembersService {
   async update(id: number, gymId: number | null, updateMemberDto: UpdateMemberDto): Promise<MemberResponseDto> {
     await this.findOne(id, gymId);
 
-    const where: any = { id };
-    if (gymId !== null) {
-      where.gymId = gymId;
-    }
-
     return this.prisma.member.update({
-      where,
+      where: { id },
       data: updateMemberDto,
     });
   }
@@ -149,17 +144,12 @@ export class MembersService {
   async remove(id: number, gymId: number | null): Promise<MemberResponseDto> {
     await this.findOne(id, gymId);
 
-    const where: any = { id };
-    if (gymId !== null) {
-      where.gymId = gymId;
-    }
-
     return this.prisma.member.delete({
-      where,
+      where: { id },
     });
   }
 
-  async findExpiredMembers(gymId: number, search?: string) {
+  async findRecentlyExpiredMembers(gymId: number, search?: string) {
     const now = new Date();
     const thirtyDaysAgo = new Date(now);
     thirtyDaysAgo.setDate(now.getDate() - 30);
@@ -173,6 +163,7 @@ export class MembersService {
             gte: thirtyDaysAgo,
           },
         },
+        none: { endDate: { gte: now }, status: 'ACTIVE' },
       },
     };
 
@@ -201,7 +192,7 @@ export class MembersService {
     });
   }
 
-  async countExpiredMembers(gymId: number) {
+  async countRecentlyExpiredMembers(gymId: number) {
     const now = new Date();
     const thirtyDaysAgo = new Date(now);
     thirtyDaysAgo.setDate(now.getDate() - 30);
@@ -216,6 +207,7 @@ export class MembersService {
               gte: thirtyDaysAgo,
             },
           },
+          none: { endDate: { gte: now }, status: 'ACTIVE' },
         },
       },
     });

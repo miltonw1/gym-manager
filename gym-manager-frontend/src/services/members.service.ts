@@ -13,7 +13,7 @@ export const membersService = {
   },
 
   async findOne(id: number): Promise<Member> {
-    const { data } = await apiClient.get<Member>('/members/${id}');
+    const { data } = await apiClient.get<Member>(`/members/${id}`);
     return data;
   },
 
@@ -23,12 +23,12 @@ export const membersService = {
   },
 
   async update(id: number, member: Partial<Member>): Promise<Member> {
-    const { data } = await apiClient.patch<Member>('/members/${id}', member);
+    const { data } = await apiClient.patch<Member>(`/members/${id}`, member);
     return data;
   },
 
   async delete(id: number): Promise<void> {
-    await apiClient.delete('/members/${id}');
+    await apiClient.delete(`/members/${id}`);
   },
 
   async getExpired(search?: string): Promise<Member[]> {

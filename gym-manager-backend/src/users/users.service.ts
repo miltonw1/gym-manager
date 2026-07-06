@@ -52,7 +52,7 @@ export class UsersService {
       where.gymId = gymId;
     }
 
-    const user = await this.prisma.user.findUnique({
+    const user = await this.prisma.user.findFirst({
       where,
       select: this.userSelect,
     });
@@ -80,13 +80,8 @@ export class UsersService {
       };
     }
 
-    const where: any = { id };
-    if (gymId !== null) {
-      where.gymId = gymId;
-    }
-
     return this.prisma.user.update({
-      where,
+      where: { id },
       data: updateData,
       select: this.userSelect,
     });
@@ -96,13 +91,8 @@ export class UsersService {
     // Check if user exists first to throw proper error
     await this.findOne(id, gymId);
 
-    const where: any = { id };
-    if (gymId !== null) {
-      where.gymId = gymId;
-    }
-
     return this.prisma.user.delete({
-      where,
+      where: { id },
       select: this.userSelect,
     });
   }
