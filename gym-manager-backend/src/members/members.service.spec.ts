@@ -12,6 +12,7 @@ describe('MembersService', () => {
       create: jest.fn(),
       findMany: jest.fn(),
       findUnique: jest.fn(),
+      findFirst: jest.fn(),
       update: jest.fn(),
       delete: jest.fn(),
     },
@@ -83,16 +84,16 @@ describe('MembersService', () => {
       const gymId = 1;
       const memberId = 1;
       const member = { id: memberId, firstName: 'John', gymId };
-      mockPrismaService.member.findUnique.mockResolvedValue(member);
+      mockPrismaService.member.findFirst.mockResolvedValue(member);
 
       const result = await service.findOne(memberId, gymId);
 
-      expect(prisma.member.findUnique).toHaveBeenCalledWith({ where: { id: memberId, gymId } });
+      expect(prisma.member.findFirst).toHaveBeenCalledWith({ where: { id: memberId, gymId } });
       expect(result).toEqual(member);
     });
 
     it('should throw NotFoundException if member not found', async () => {
-      mockPrismaService.member.findUnique.mockResolvedValue(null);
+      mockPrismaService.member.findFirst.mockResolvedValue(null);
 
       await expect(service.findOne(1, 1)).rejects.toThrow(NotFoundException);
     });
@@ -104,13 +105,13 @@ describe('MembersService', () => {
       const memberId = 1;
       const member = { id: memberId, firstName: 'John', gymId };
       const dto = { firstName: 'Jane' };
-      mockPrismaService.member.findUnique.mockResolvedValue(member);
+      mockPrismaService.member.findFirst.mockResolvedValue(member);
       mockPrismaService.member.update.mockResolvedValue({ ...member, ...dto });
 
       const result = await service.update(memberId, gymId, dto);
 
       expect(prisma.member.update).toHaveBeenCalledWith({
-        where: { id: memberId, gymId },
+        where: { id: memberId },
         data: dto,
       });
       expect(result.firstName).toEqual(dto.firstName);
@@ -122,33 +123,30 @@ describe('MembersService', () => {
       const gymId = 1;
       const memberId = 1;
       const member = { id: memberId, firstName: 'John', gymId };
-      mockPrismaService.member.findUnique.mockResolvedValue(member);
+      mockPrismaService.member.findFirst.mockResolvedValue(member);
       mockPrismaService.member.delete.mockResolvedValue(member);
 
       const result = await service.remove(memberId, gymId);
 
       expect(prisma.member.delete).toHaveBeenCalledWith({
-        where: { id: memberId, gymId }
+        where: { id: memberId }
       });
       expect(result).toEqual(member);
     });
   });
 
-  describe('findExpiredMembers', () => {
+  describe('findRecentlyExpiredMembers', () => {
     it('should return members whose memberships expired in the last 30 days', async () => {
       const gymId = 1;
       const expiredMembers = [{ id: 1, firstName: 'Expired', lastName: 'Member' }];
       mockPrismaService.member.findMany.mockResolvedValue(expiredMembers);
 
-      const result = await service.findExpiredMembers(gymId);
+      const result = await service.findRecentlyExpiredMembers(gymId);
 
       expect(prisma.member.findMany).toHaveBeenCalledWith(expect.objectContaining({
         where: expect.objectContaining({
           gymId,
           enrollments: expect.objectContaining({
-            some: expect.objectContaining({
-              status: 'ACTIVE',
-            }),
             none: expect.objectContaining({
               status: 'ACTIVE',
             }),
@@ -159,13 +157,13 @@ describe('MembersService', () => {
     });
   });
 
-  describe('countExpiredMembers', () => {
+  describe('countRecentlyExpiredMembers', () => {
     it('should return the count of expired members', async () => {
       const gymId = 1;
       // @ts-ignore
       mockPrismaService.member.count = jest.fn().mockResolvedValue(5);
 
-      const result = await service.countExpiredMembers(gymId);
+      const result = await service.countRecentlyExpiredMembers(gymId);
 
       expect(prisma.member.count).toHaveBeenCalled();
       expect(result).toEqual(5);

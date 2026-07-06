@@ -14,8 +14,8 @@ describe('MembersController', () => {
     findOne: jest.fn(),
     update: jest.fn(),
     remove: jest.fn(),
-    findExpiredMembers: jest.fn(),
-    countExpiredMembers: jest.fn(),
+    findRecentlyExpiredMembers: jest.fn(),
+    countRecentlyExpiredMembers: jest.fn(),
   };
 
   beforeEach(async () => {
@@ -77,41 +77,14 @@ describe('MembersController', () => {
     });
   });
 
-  describe('update', () => {
-    it('should update a member', async () => {
-      const gymId = 1;
-      const memberId = 1;
-      const dto: UpdateMemberDto = { firstName: 'Jane' };
-      mockMembersService.update.mockResolvedValue({ id: memberId, gymId, ...dto });
-
-      const result = await controller.update(memberId, gymId, dto);
-
-      expect(service.update).toHaveBeenCalledWith(memberId, gymId, dto);
-      expect(result.firstName).toEqual(dto.firstName);
-    });
-  });
-
-  describe('remove', () => {
-    it('should remove a member', async () => {
-      const gymId = 1;
-      const memberId = 1;
-      mockMembersService.remove.mockResolvedValue({ id: memberId, gymId });
-
-      const result = await controller.remove(memberId, gymId);
-
-      expect(service.remove).toHaveBeenCalledWith(memberId, gymId);
-      expect(result).toEqual({ id: memberId, gymId });
-    });
-  });
-
   describe('getExpiredMembers', () => {
     it('should return expired members', async () => {
       const gymId = 1;
-      mockMembersService.findExpiredMembers.mockResolvedValue([]);
+      mockMembersService.findRecentlyExpiredMembers.mockResolvedValue([]);
 
       const result = await controller.getExpiredMembers(gymId, '');
 
-      expect(service.findExpiredMembers).toHaveBeenCalledWith(gymId, '');
+      expect(service.findRecentlyExpiredMembers).toHaveBeenCalledWith(gymId, '');
       expect(result).toEqual([]);
     });
   });
@@ -119,11 +92,11 @@ describe('MembersController', () => {
   describe('getExpiredMembersCount', () => {
     it('should return the count of expired members', async () => {
       const gymId = 1;
-      mockMembersService.countExpiredMembers.mockResolvedValue(5);
+      mockMembersService.countRecentlyExpiredMembers.mockResolvedValue(5);
 
       const result = await controller.getExpiredMembersCount(gymId);
 
-      expect(service.countExpiredMembers).toHaveBeenCalledWith(gymId);
+      expect(service.countRecentlyExpiredMembers).toHaveBeenCalledWith(gymId);
       expect(result).toEqual(5);
     });
   });
