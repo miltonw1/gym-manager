@@ -38,4 +38,10 @@ describe('subscriptionsService', () => {
     await subscriptionsService.verify(7);
     expect(apiClient.post).toHaveBeenCalledWith('/subscriptions/7/verify');
   });
+
+  it('should reconcile pending subscriptions', async () => {
+    vi.mocked(apiClient.post).mockResolvedValue({ data: [] });
+    await subscriptionsService.reconcile();
+    expect(apiClient.post).toHaveBeenCalledWith('/subscriptions/reconcile');
+  });
 });

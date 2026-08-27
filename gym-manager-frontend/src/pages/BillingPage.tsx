@@ -28,6 +28,8 @@ const BillingPage = () => {
   const fetchData = useCallback(async () => {
     try {
       setLoading(true);
+      // Destraba pagos que hayan quedado pendientes (acredita días si MP los aprobó).
+      await subscriptionsService.reconcile();
       const [plansData, historyData, statusData] = await Promise.all([
         subscriptionsService.getPlans(),
         subscriptionsService.getHistory(),

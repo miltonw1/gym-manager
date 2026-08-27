@@ -6,6 +6,7 @@ export interface CreatePreferenceInput {
   planName: string;
   price: number;
   externalReference: string;
+  subscriptionId: number;
   payerEmail?: string;
 }
 
@@ -44,7 +45,8 @@ export class MercadoPagoService {
     sandboxInitPoint?: string;
     preferenceId: string;
   }> {
-    const frontendUrl = process.env.FRONTEND_URL || 'http://localhost:5173';
+    const publicBackendUrl =
+      process.env.PUBLIC_BACKEND_URL || 'http://localhost:3000';
     const notificationUrl = process.env.MERCADO_PAGO_WEBHOOK_URL;
 
     const response = await this.preference.create({
@@ -68,10 +70,11 @@ export class MercadoPagoService {
             }
           : {}),
         back_urls: {
-          success: `${frontendUrl}/billing/result?status=success`,
-          pending: `${frontendUrl}/billing/result?status=pending`,
-          failure: `${frontendUrl}/billing/result?status=failure`,
+          success: `${publicBackendUrl}/subscriptions/return?status=success&subscriptionId=${input.subscriptionId}`,
+          pending: `${publicBackendUrl}/subscriptions/return?status=pending&subscriptionId=${input.subscriptionId}`,
+          failure: `${publicBackendUrl}/subscriptions/return?status=failure&subscriptionId=${input.subscriptionId}`,
         },
+        auto_return: 'approved',
         statement_descriptor: 'GYM MANAGER',
       },
     });
