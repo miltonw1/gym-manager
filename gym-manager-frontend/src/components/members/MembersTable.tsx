@@ -17,16 +17,18 @@ import {
 } from '@/components/ui/select';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { Eye, Pencil, Search, ChevronLeft, ChevronRight, UserPlus } from 'lucide-react';
+import { Eye, Pencil, Search, ChevronLeft, ChevronRight, UserPlus, Lock } from 'lucide-react';
 import { membersService } from '@/services/members.service';
 import { MemberFilterStatus } from '@/types/members.types';
 import type { Member, MemberFilterStatusType } from '@/types/members.types';
+import { useIsReadOnly } from '@/hooks/useIsReadOnly';
 import ViewMemberModal from './ViewMemberModal';
 import AddMemberModal from './AddMemberModal';
 import EditMemberModal from './EditMemberModal';
 
 const MembersTable = () => {
   const [members, setMembers] = useState<Member[]>([]);
+  const isReadOnly = useIsReadOnly();
   const [total, setTotal] = useState(0);
   const [loading, setLoading] = useState(true);
   
@@ -142,8 +144,8 @@ const MembersTable = () => {
           </Select>
         </div>
 
-        <Button className="gap-2" onClick={() => setIsAddModalOpen(true)}>
-          <UserPlus className="h-4 w-4" />
+        <Button className="gap-2" onClick={() => setIsAddModalOpen(true)} disabled={isReadOnly}>
+          {isReadOnly ? <Lock className="h-4 w-4" /> : <UserPlus className="h-4 w-4" />}
           Nuevo Socio
         </Button>
       </div>
@@ -200,6 +202,7 @@ const MembersTable = () => {
                         size="icon" 
                         title="Editar socio"
                         onClick={() => handleOpenEditModal(member)}
+                        disabled={isReadOnly}
                       >
                         <Pencil className="h-4 w-4" />
                       </Button>

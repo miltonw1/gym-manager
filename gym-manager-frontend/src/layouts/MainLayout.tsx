@@ -2,6 +2,7 @@ import { Outlet, useNavigate, Link } from 'react-router';
 import { useAuthStore } from '@/store/useAuthStore';
 import { Button } from '@/components/ui/button';
 import { LogOut, LayoutGrid, CreditCard } from 'lucide-react';
+import ReadOnlyBanner from '@/components/billing/ReadOnlyBanner';
 
 const MainLayout = () => {
   const navigate = useNavigate();
@@ -35,6 +36,13 @@ const MainLayout = () => {
                 <CreditCard className="h-4 w-4" />
                 Planes
               </Link>
+              <Link 
+                to="/billing" 
+                className="text-sm font-medium flex items-center gap-1.5 text-muted-foreground hover:text-foreground transition-colors px-2"
+              >
+                <CreditCard className="h-4 w-4" />
+                Suscripción
+              </Link>
             </nav>
           </div>
           <div className="flex flex-1 items-center justify-end space-x-2">
@@ -47,6 +55,7 @@ const MainLayout = () => {
           </div>
         </div>
       </header>
+      <ReadOnlyBanner />
       <main className="flex-1 flex flex-col">
         <Outlet />
       </main>

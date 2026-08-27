@@ -24,6 +24,7 @@ describe('LoginForm', () => {
     vi.clearAllMocks();
     vi.mocked(useAuthStore).mockReturnValue({
       setAuth: vi.fn(),
+      loadProfile: vi.fn(() => Promise.resolve()),
     } as any);
   });
 
@@ -47,7 +48,10 @@ describe('LoginForm', () => {
     const mockToken = 'test-token';
     vi.mocked(apiClient.post).mockResolvedValue({ data: { access_token: mockToken } });
     const mockSetAuth = vi.fn();
-    vi.mocked(useAuthStore).mockReturnValue({ setAuth: mockSetAuth } as any);
+    vi.mocked(useAuthStore).mockReturnValue({
+      setAuth: mockSetAuth,
+      loadProfile: vi.fn(() => Promise.resolve()),
+    } as any);
 
     render(
       <MemoryRouter>
