@@ -80,7 +80,7 @@ const ExpiredMembersTable = ({ members, onUpdate }: ExpiredMembersTableProps) =>
                 <TableCell>
                   {lastEnrollment ? format(parseISO(lastEnrollment.endDate), 'PP', { locale: es }) : '-'}
                 </TableCell>
-                <TableCell className='text-red-600 font-medium'>
+                <TableCell className='text-red-600 dark:text-red-400 font-medium'>
                   {lastEnrollment ? getDaysAgo(lastEnrollment.endDate) : '-'}
                 </TableCell>
                 <TableCell className='text-right'>
