@@ -24,6 +24,9 @@ model Gym {
   phone     String
   email     String
 
+  // Fecha hasta la cual el gimnasio puede ESCRIBIR en el sistema (días de uso).
+  accessUntil DateTime?
+
   createdAt DateTime @default(now())
 
   users     User[]
@@ -31,6 +34,7 @@ model Gym {
   plans     Plan[]
   exercises Exercise[]
   routines  Routine[]
+  subscriptions Subscription[]
 
   @@index([name])
   @@index([city])
@@ -186,4 +190,43 @@ enum EnrollmentStatus {
 enum UserRole {
   ADMIN
   STAFF
+}
+
+model SubscriptionPlan {
+  id        Int      @id @default(autoincrement())
+  name      String
+  days      Int
+  price     Decimal  @db.Decimal(10, 2)
+  active    Boolean  @default(true)
+  createdAt DateTime @default(now())
+
+  subscriptions Subscription[]
+}
+
+model Subscription {
+  id                 Int                @id @default(autoincrement())
+  gymId              Int
+  planId             Int?
+  status             SubscriptionStatus @default(PENDING)
+  startDate          DateTime?
+  endDate            DateTime?
+  amount             Decimal            @db.Decimal(10, 2)
+  mercadoPagoPaymentId String?
+  externalReference  String?            @unique
+  paidAt             DateTime?
+  createdAt          DateTime           @default(now())
+
+  gym  Gym              @relation(fields: [gymId], references: [id], onDelete: Cascade)
+  plan SubscriptionPlan? @relation(fields: [planId], references: [id], onDelete: SetNull)
+
+  @@index([gymId])
+  @@index([status])
+  @@index([externalReference])
+}
+
+enum SubscriptionStatus {
+  PENDING
+  APPROVED
+  REJECTED
+  EXPIRED
 }
