@@ -98,6 +98,15 @@ export class AuthService {
       gymId: user.gymId,
     };
 
+    let gym: { id: number; name: string } | null = null;
+    if (user.gymId !== null) {
+      const found = await this.prisma.gym.findUnique({
+        where: { id: user.gymId },
+        select: { id: true, name: true },
+      });
+      gym = found;
+    }
+
     return {
       user: {
         id: user.id,
@@ -105,6 +114,7 @@ export class AuthService {
         role: user.role,
         gymId: user.gymId,
       },
+      gym,
       access_token: await this.jwtService.signAsync(tokenPayload),
       subscription,
     };

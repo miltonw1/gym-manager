@@ -38,6 +38,7 @@ export interface RegisterRequest {
 
 export interface MeResponse {
   user: User;
+  gym: { id: number; name: string } | null;
   access_token: string;
   subscription: GymSubscriptionStatus;
 }

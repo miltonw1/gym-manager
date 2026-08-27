@@ -6,6 +6,7 @@ import { authService } from '@/services/auth.service';
 interface AuthState {
   accessToken: string | null;
   user: User | null;
+  gym: { id: number; name: string } | null;
   subscription: GymSubscriptionStatus | null;
   setAuth: (token: string) => void;
   setSubscription: (sub: GymSubscriptionStatus) => void;
@@ -18,6 +19,7 @@ export const useAuthStore = create<AuthState>()(
     (set, get) => ({
       accessToken: null,
       user: null,
+      gym: null,
       subscription: null,
 
       setAuth: (token) => set({ accessToken: token }),
@@ -31,15 +33,16 @@ export const useAuthStore = create<AuthState>()(
           set({
             accessToken: me.access_token,
             user: me.user,
+            gym: me.gym,
             subscription: me.subscription,
           });
         } catch {
           // Token inválido: el interceptor de axios se encarga de limpiar
-          set({ accessToken: null, user: null, subscription: null });
+          set({ accessToken: null, user: null, gym: null, subscription: null });
         }
       },
 
-      logout: () => set({ accessToken: null, user: null, subscription: null }),
+      logout: () => set({ accessToken: null, user: null, gym: null, subscription: null }),
     }),
     {
       name: 'gym-manager-auth',

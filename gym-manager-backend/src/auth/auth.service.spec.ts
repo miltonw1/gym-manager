@@ -23,6 +23,7 @@ describe('AuthService', () => {
     },
     gym: {
       create: jest.fn(),
+      findUnique: jest.fn(),
     },
   };
 
@@ -107,10 +108,12 @@ describe('AuthService', () => {
         daysRemaining: 20,
         active: true,
       });
+      mockPrismaService.gym.findUnique.mockResolvedValue({ id: 1, name: 'Gym Demo' });
 
       const result = await service.me(10);
       expect(result.user.email).toBe('owner@fit.com');
       expect(result.subscription.active).toBe(true);
+      expect(result.gym?.name).toBe('Gym Demo');
       expect(result.access_token).toBe('signed-token');
     });
   });

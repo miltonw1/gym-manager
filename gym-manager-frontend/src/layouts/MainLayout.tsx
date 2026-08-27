@@ -6,7 +6,7 @@ import ReadOnlyBanner from '@/components/billing/ReadOnlyBanner';
 
 const MainLayout = () => {
   const navigate = useNavigate();
-  const { logout } = useAuthStore();
+  const { logout, gym } = useAuthStore();
 
   const handleLogout = () => {
     logout();
@@ -20,6 +20,11 @@ const MainLayout = () => {
           <div className="mr-4 flex items-center">
             <Link className="mr-6 flex items-center space-x-2" to="/">
               <span className="font-bold inline-block">Gym Manager</span>
+              {gym && (
+                <span className="hidden lg:inline text-sm font-medium text-muted-foreground border rounded-full px-3 py-0.5">
+                  {gym.name}
+                </span>
+              )}
             </Link>
             <nav className="hidden md:flex items-center space-x-4">
               <Link 
