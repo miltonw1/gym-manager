@@ -191,4 +191,46 @@ describe('SubscriptionsService', () => {
       await expect(service.verifyPayment(1, 999)).rejects.toThrow();
     });
   });
+
+  describe('reconcile', () => {
+    it('should approve pending subscriptions that MP reports as approved', async () => {
+      mockPrismaService.subscription.findMany.mockResolvedValue([
+        {
+          id: 5,
+          gymId: 1,
+          planId: 2,
+          status: SubscriptionStatus.PENDING,
+          externalReference: 'gym-1-abc',
+          plan: { id: 2, name: 'Plan 90 días', days: 90, price: '27000' },
+        },
+      ]);
+      mockMercadoPago.findPaymentByExternalReference.mockResolvedValue([
+        { id: '999', status: 'approved' },
+      ]);
+      mockPrismaService.gym.findUnique.mockResolvedValue({ accessUntil: null });
+      mockPrismaService.subscription.update.mockResolvedValue({});
+      mockPrismaService.gym.update.mockResolvedValue({});
+
+      const results = await service.reconcile(1);
+      expect(results).toHaveLength(1);
+      expect(results[0].status).toBe('approved');
+    });
+
+    it('should keep unresolved pending subscriptions as pending', async () => {
+      mockPrismaService.subscription.findMany.mockResolvedValue([
+        {
+          id: 6,
+          gymId: 1,
+          planId: 1,
+          status: SubscriptionStatus.PENDING,
+          externalReference: 'gym-1-xyz',
+          plan: { id: 1, name: 'Plan 30 días', days: 30, price: '10000' },
+        },
+      ]);
+      mockMercadoPago.findPaymentByExternalReference.mockResolvedValue([]);
+
+      const results = await service.reconcile(1);
+      expect(results[0].status).toBe(SubscriptionStatus.PENDING);
+    });
+  });
 });

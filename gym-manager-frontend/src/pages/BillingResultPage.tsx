@@ -20,7 +20,9 @@ const BillingResultPage = () => {
   const [verifying, setVerifying] = useState(false);
   const [verified, setVerified] = useState(false);
 
-  const pendingSubscriptionId = localStorage.getItem('gym-manager-pending-subscription');
+  const subscriptionIdParam = searchParams.get('subscriptionId');
+  const storedSubscriptionId = localStorage.getItem('gym-manager-pending-subscription');
+  const subscriptionId = subscriptionIdParam || storedSubscriptionId;
 
   const refreshProfile = useCallback(async () => {
     await loadProfile();
@@ -30,11 +32,11 @@ const BillingResultPage = () => {
     refreshProfile();
   }, [refreshProfile]);
 
-  const handleVerify = async () => {
-    if (!pendingSubscriptionId) return;
+  const handleVerify = useCallback(async () => {
+    if (!subscriptionId || verified) return;
     setVerifying(true);
     try {
-      await subscriptionsService.verify(Number(pendingSubscriptionId));
+      await subscriptionsService.verify(Number(subscriptionId));
       await refreshProfile();
       localStorage.removeItem('gym-manager-pending-subscription');
       setVerified(true);
@@ -43,7 +45,15 @@ const BillingResultPage = () => {
     } finally {
       setVerifying(false);
     }
-  };
+  }, [subscriptionId, verified, refreshProfile]);
+
+  // Verificación automática al volver de Mercado Pago (cubre el sandbox donde
+  // el webhook no dispara). En producción el webhook lo hace en paralelo.
+  useEffect(() => {
+    if ((status === 'success' || status === 'pending') && subscriptionId) {
+      handleVerify();
+    }
+  }, [status, subscriptionId, handleVerify]);
 
   const config = {
     success: {
@@ -72,7 +82,7 @@ const BillingResultPage = () => {
           <CardDescription>{config.description}</CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
-          {(status === 'pending' || status === 'success') && pendingSubscriptionId && (
+          {(status === 'pending' || status === 'success') && subscriptionId && (
             <Button className="w-full gap-2" onClick={handleVerify} disabled={verifying || verified}>
               {verifying ? (
                 <Loader2 className="h-4 w-4 animate-spin" />

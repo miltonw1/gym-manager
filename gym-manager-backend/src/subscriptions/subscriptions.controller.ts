@@ -8,8 +8,11 @@ import {
   Param,
   ParseIntPipe,
   Post,
+  Query,
+  Res,
   UseGuards,
 } from '@nestjs/common';
+import type { Response } from 'express';
 import { SubscriptionsService } from './subscriptions.service';
 import { CreateCheckoutDto } from './dto/create-checkout.dto';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
@@ -37,6 +40,31 @@ export class SubscriptionsController {
       return [];
     }
     return this.subscriptionsService.getHistory(gymId);
+  }
+
+  // MP redirige acá tras el pago. Reenvía al browser al frontend local.
+  @Get('return')
+  returnToSite(
+    @Query('status') status: string,
+    @Query('subscriptionId', ParseIntPipe) subscriptionId: number,
+    @Res() res: Response,
+  ) {
+    const frontendUrl = process.env.FRONTEND_URL || 'http://localhost:5173';
+    const safeStatus = ['success', 'pending', 'failure'].includes(status)
+      ? status
+      : 'pending';
+    res.redirect(
+      `${frontendUrl}/billing/result?status=${safeStatus}&subscriptionId=${subscriptionId}`,
+    );
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Post('reconcile')
+  reconcile(@GetUser('gymId') gymId: number | null) {
+    if (gymId === null) {
+      return [];
+    }
+    return this.subscriptionsService.reconcile(gymId);
   }
 
   @UseGuards(JwtAuthGuard)

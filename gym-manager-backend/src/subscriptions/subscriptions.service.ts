@@ -92,6 +92,47 @@ export class SubscriptionsService {
     }));
   }
 
+  async reconcile(gymId: number) {
+    const pending = await this.prisma.subscription.findMany({
+      where: { gymId, status: SubscriptionStatus.PENDING },
+      include: { plan: true },
+    });
+
+    const results: Array<{ subscriptionId: number; status: SubscriptionStatus }> = [];
+
+    for (const subscription of pending) {
+      if (!subscription.externalReference) {
+        continue;
+      }
+
+      try {
+        const payments = await this.mercadoPago.findPaymentByExternalReference(
+          subscription.externalReference,
+        );
+
+        if (payments.length === 0) {
+          results.push({ subscriptionId: subscription.id, status: subscription.status });
+          continue;
+        }
+
+        await this.applyPaymentStatus(
+          subscription.id,
+          String(payments[0].id),
+          payments[0].status,
+        );
+        results.push({
+          subscriptionId: subscription.id,
+          status: (payments[0].status as SubscriptionStatus) ?? SubscriptionStatus.PENDING,
+        });
+      } catch (error) {
+        this.logger.error(`Error reconciling subscription ${subscription.id}`, error);
+        results.push({ subscriptionId: subscription.id, status: subscription.status });
+      }
+    }
+
+    return results;
+  }
+
   async checkout(
     gymId: number,
     planId: number,
@@ -126,6 +167,7 @@ export class SubscriptionsService {
         planName: plan.name,
         price: Number(plan.price),
         externalReference,
+        subscriptionId: subscription.id,
         payerEmail,
       });
     } catch (error) {

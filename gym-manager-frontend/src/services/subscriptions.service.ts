@@ -1,5 +1,5 @@
 import apiClient from '@/lib/api-client';
-import type { GymSubscriptionStatus } from '@/types/auth.types';
+import type { GymSubscriptionStatus, SubscriptionStatus } from '@/types/auth.types';
 import type {
   SubscriptionPlan,
   SubscriptionHistoryItem,
@@ -30,6 +30,13 @@ export const subscriptionsService = {
 
   async verify(subscriptionId: number): Promise<VerifyResponse> {
     const { data } = await apiClient.post<VerifyResponse>(`/subscriptions/${subscriptionId}/verify`);
+    return data;
+  },
+
+  async reconcile(): Promise<Array<{ subscriptionId: number; status: SubscriptionStatus }>> {
+    const { data } = await apiClient.post<
+      Array<{ subscriptionId: number; status: SubscriptionStatus }>
+    >('/subscriptions/reconcile');
     return data;
   },
 };
