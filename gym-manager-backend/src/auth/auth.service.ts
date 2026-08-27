@@ -1,7 +1,9 @@
 import {
+  BadRequestException,
   ConflictException,
   ForbiddenException,
   Injectable,
+  Logger,
   UnauthorizedException,
 } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
@@ -11,12 +13,16 @@ import { SubscriptionsService } from '../subscriptions/subscriptions.service';
 import { RegisterDto } from './dto/register.dto';
 import { UserRole } from '@prisma/client';
 import * as bcrypt from 'bcrypt';
+import * as crypto from 'crypto';
 
 const DAY_MS = 24 * 60 * 60 * 1000;
 const TRIAL_DAYS = Number(process.env.TRIAL_DAYS ?? 14);
+const RESET_TOKEN_TTL_MS = 60 * 60 * 1000; // 1 hora
 
 @Injectable()
 export class AuthService {
+  private readonly logger = new Logger(AuthService.name);
+
   constructor(
     private usersService: UsersService,
     private jwtService: JwtService,
@@ -86,6 +92,79 @@ export class AuthService {
     return {
       access_token: await this.jwtService.signAsync(payload),
     };
+  }
+
+  async forgotPassword(email: string) {
+    const user = await this.prisma.user.findUnique({ where: { email } });
+    if (!user) {
+      return {
+        message:
+          'Si el email existe, te enviamos un enlace para restablecer tu contraseña.',
+      };
+    }
+
+    const token = crypto.randomBytes(32).toString('hex');
+    const tokenHash = crypto.createHash('sha256').update(token).digest('hex');
+    const expiresAt = new Date(Date.now() + RESET_TOKEN_TTL_MS);
+
+    await this.prisma.$transaction(async (tx) => {
+      await tx.passwordResetToken.updateMany({
+        where: { userId: user.id, usedAt: null },
+        data: { usedAt: new Date() },
+      });
+
+      await tx.passwordResetToken.create({
+        data: { userId: user.id, tokenHash, expiresAt },
+      });
+    });
+
+    const frontendUrl = process.env.FRONTEND_URL || 'http://localhost:5173';
+    const resetUrl = `${frontendUrl}/reset-password?token=${token}`;
+
+    // Opción B (sin servicio de email): logueamos el enlace en consola.
+    this.logger.log(`[Password Reset] ${user.email} -> ${resetUrl}`);
+
+    return {
+      message:
+        'Si el email existe, te enviamos un enlace para restablecer tu contraseña.',
+    };
+  }
+
+  async resetPassword(token: string, password: string) {
+    const tokenHash = crypto.createHash('sha256').update(token).digest('hex');
+    const record = await this.prisma.passwordResetToken.findUnique({
+      where: { tokenHash },
+      include: { user: true },
+    });
+
+    if (!record || record.usedAt || record.expiresAt.getTime() < Date.now()) {
+      throw new BadRequestException(
+        'El enlace es inválido o ya expiró. Solicita uno nuevo.',
+      );
+    }
+
+    const hashedPassword = await bcrypt.hash(password, 10);
+
+    await this.prisma.$transaction(async (tx) => {
+      await tx.passwordResetToken.update({
+        where: { id: record.id },
+        data: { usedAt: new Date() },
+      });
+
+      await tx.user.update({
+        where: { id: record.userId },
+        data: {
+          password: {
+            upsert: {
+              create: { hash: hashedPassword },
+              update: { hash: hashedPassword },
+            },
+          },
+        },
+      });
+    });
+
+    return { message: 'Contraseña actualizada correctamente.' };
   }
 
   async me(userId: number) {

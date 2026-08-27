@@ -49,4 +49,19 @@ describe('authService', () => {
     expect(apiClient.get).toHaveBeenCalledWith('/auth/me');
     expect(result.access_token).toBe('t');
   });
+
+  it('should call forgotPassword endpoint', async () => {
+    vi.mocked(apiClient.post).mockResolvedValue({ data: { message: 'ok' } });
+    await authService.forgotPassword('user@x.com');
+    expect(apiClient.post).toHaveBeenCalledWith('/auth/forgot-password', { email: 'user@x.com' });
+  });
+
+  it('should call resetPassword endpoint', async () => {
+    vi.mocked(apiClient.post).mockResolvedValue({ data: { message: 'ok' } });
+    await authService.resetPassword('token123', 'newsecret');
+    expect(apiClient.post).toHaveBeenCalledWith('/auth/reset-password', {
+      token: 'token123',
+      password: 'newsecret',
+    });
+  });
 });

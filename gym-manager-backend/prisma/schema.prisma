@@ -50,6 +50,7 @@ model User {
 
   gym      Gym?       @relation(fields: [gymId], references: [id], onDelete: Cascade)
   password Password?
+  passwordResetTokens PasswordResetToken[]
 
   @@index([gymId])
 }
@@ -59,6 +60,20 @@ model Password {
   hash   String
   userId Int    @unique
   user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model PasswordResetToken {
+  id        Int      @id @default(autoincrement())
+  userId    Int
+  tokenHash String   @unique
+  expiresAt DateTime
+  usedAt    DateTime?
+  createdAt DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([tokenHash])
 }
 
 model Member {
