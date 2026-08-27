@@ -1,0 +1,6 @@
+{
+  "name": "mercado_pago_subscriptions_20260827",
+  "created": "2026-08-27",
+  "status": "in_progress",
+  "summary": "Fix Mercado Pago Checkout Pro: expose backend via ngrok for webhook, public return URL redirect, auto_return, reconciliation, and cleanup of PENDING test subscriptions."
+}
