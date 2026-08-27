@@ -7,9 +7,11 @@ import type { MonthlyRevenue } from '@/types/payments.types';
 import { DollarSign, Calendar, AlertTriangle } from 'lucide-react';
 import { useNavigate } from 'react-router';
 import MembersTable from '@/components/members/MembersTable';
+import { useAuthStore } from '@/store/useAuthStore';
 
 const DashboardPage = () => {
   const navigate = useNavigate();
+  const { gym } = useAuthStore();
   const [revenue, setRevenue] = useState<MonthlyRevenue | null>(null);
   const [expiringCount, setExpiringCount] = useState<number>(0);
   const [expiredCount, setExpiredCount] = useState<number>(0);
@@ -47,7 +49,9 @@ const DashboardPage = () => {
   return (
     <div className='flex flex-1 flex-col gap-4 p-4 pt-0'>
       <div className='flex items-center justify-between py-4'>
-        <h1 className='text-2xl font-bold tracking-tight'>Dashboard</h1>
+        <h1 className='text-2xl font-bold tracking-tight'>
+          Dashboard{gym ? ` — ${gym.name}` : ''}
+        </h1>
       </div>
 
       <div className='grid gap-4 md:grid-cols-2 lg:grid-cols-4'>
