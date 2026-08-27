@@ -166,9 +166,9 @@ const LoginForm = () => {
       <CardFooter>
         <div className="text-sm text-center w-full space-y-1">
           <div>
-            <a href="#" className="text-primary hover:underline">
+            <Link to="/forgot-password" className="text-primary hover:underline">
               ¿Olvidaste tu contraseña?
-            </a>
+            </Link>
           </div>
           <div className="text-muted-foreground">
             ¿No tenés cuenta?{' '}

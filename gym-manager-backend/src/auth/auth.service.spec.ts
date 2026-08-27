@@ -20,10 +20,17 @@ describe('AuthService', () => {
     user: {
       findUnique: jest.fn(),
       create: jest.fn(),
+      update: jest.fn(),
     },
     gym: {
       create: jest.fn(),
       findUnique: jest.fn(),
+    },
+    passwordResetToken: {
+      findUnique: jest.fn(),
+      create: jest.fn(),
+      updateMany: jest.fn(),
+      update: jest.fn(),
     },
   };
 
@@ -115,6 +122,66 @@ describe('AuthService', () => {
       expect(result.subscription.active).toBe(true);
       expect(result.gym?.name).toBe('Gym Demo');
       expect(result.access_token).toBe('signed-token');
+    });
+  });
+
+  describe('forgotPassword', () => {
+    it('should return a generic message even if email does not exist', async () => {
+      mockPrismaService.user.findUnique.mockResolvedValue(null);
+      const result = await service.forgotPassword('nobody@example.com');
+      expect(result.message).toMatch(/si el email existe/i);
+      expect(mockPrismaService.passwordResetToken.create).not.toHaveBeenCalled();
+    });
+
+    it('should create a reset token for an existing user', async () => {
+      mockPrismaService.user.findUnique.mockResolvedValue({
+        id: 10,
+        email: 'owner@fit.com',
+      });
+      mockPrismaService.passwordResetToken.create.mockResolvedValue({ id: 1 });
+
+      await service.forgotPassword('owner@fit.com');
+      expect(mockPrismaService.passwordResetToken.updateMany).toHaveBeenCalled();
+      expect(mockPrismaService.passwordResetToken.create).toHaveBeenCalled();
+    });
+  });
+
+  describe('resetPassword', () => {
+    it('should update the password when token is valid', async () => {
+      mockPrismaService.passwordResetToken.findUnique.mockResolvedValue({
+        id: 1,
+        userId: 10,
+        usedAt: null,
+        expiresAt: new Date(Date.now() + 60 * 60 * 1000),
+        user: { id: 10, email: 'owner@fit.com' },
+      });
+      mockPrismaService.user.update.mockResolvedValue({ id: 10 });
+
+      const result = await service.resetPassword('valid-token', 'newsecret123');
+      expect(mockPrismaService.user.update).toHaveBeenCalled();
+      expect(result.message).toMatch(/actualizada/i);
+    });
+
+    it('should throw BadRequestException when token is expired', async () => {
+      mockPrismaService.passwordResetToken.findUnique.mockResolvedValue({
+        id: 1,
+        userId: 10,
+        usedAt: null,
+        expiresAt: new Date(Date.now() - 60 * 60 * 1000),
+      });
+
+      await expect(service.resetPassword('expired-token', 'newsecret123')).rejects.toThrow();
+    });
+
+    it('should throw BadRequestException when token is already used', async () => {
+      mockPrismaService.passwordResetToken.findUnique.mockResolvedValue({
+        id: 1,
+        userId: 10,
+        usedAt: new Date(),
+        expiresAt: new Date(Date.now() + 60 * 60 * 1000),
+      });
+
+      await expect(service.resetPassword('used-token', 'newsecret123')).rejects.toThrow();
     });
   });
 });
