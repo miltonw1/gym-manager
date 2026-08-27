@@ -29,4 +29,7 @@ This file tracks all major tracks for the project. Each track has its own detail
 - [~] **Track: Dashboard y Vista de Miembros Expirados**
   *Link: [./tracks/expired_members_dashboard_20260315/](./tracks/expired_members_dashboard_20260315/)*
 
+- [~] **Track: Mercado Pago Checkout & Subscriptions (Fix)**
+  *Link: [./tracks/mercado_pago_subscriptions_20260827/](./tracks/mercado_pago_subscriptions_20260827/)*
+
 ---
