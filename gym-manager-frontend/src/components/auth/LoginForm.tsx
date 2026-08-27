@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
-import { useNavigate } from 'react-router';
+import { useNavigate, Link } from 'react-router';
 import { Eye, EyeOff, Loader2 } from 'lucide-react';
 import { useAuthStore } from '@/store/useAuthStore';
 import apiClient from '@/lib/api-client';
@@ -42,7 +42,7 @@ const LoginForm = () => {
   const [isLoading, setIsLoading] = useState(false);
 
   const navigate = useNavigate();
-  const { setAuth } = useAuthStore();
+  const { setAuth, loadProfile } = useAuthStore();
 
   const form = useForm<LoginValues>({
     resolver: zodResolver(loginSchema),
@@ -63,6 +63,7 @@ const LoginForm = () => {
       });
 
       setAuth(response.data.access_token);
+      await loadProfile();
       navigate('/dashboard');
     } catch (err: any) {
       const message = err.response?.data?.message || 'Algo salió mal. Intente de nuevo.';
@@ -163,10 +164,18 @@ const LoginForm = () => {
         </Form>
       </CardContent>
       <CardFooter>
-        <div className="text-sm text-center w-full">
-          <a href="#" className="text-primary hover:underline">
-            ¿Olvidaste tu contraseña?
-          </a>
+        <div className="text-sm text-center w-full space-y-1">
+          <div>
+            <a href="#" className="text-primary hover:underline">
+              ¿Olvidaste tu contraseña?
+            </a>
+          </div>
+          <div className="text-muted-foreground">
+            ¿No tenés cuenta?{' '}
+            <Link to="/register" className="text-primary hover:underline">
+              Creá una
+            </Link>
+          </div>
         </div>
       </CardFooter>
     </Card>

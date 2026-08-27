@@ -15,9 +15,10 @@ import {
   SelectTrigger, 
   SelectValue 
 } from '@/components/ui/select';
-import { CreditCard, User, RefreshCw, Loader2, PlusCircle } from 'lucide-react';
+import { CreditCard, User, RefreshCw, Loader2, PlusCircle, Lock } from 'lucide-react';
 import { enrollmentsService } from '@/services/enrollments.service';
 import { plansService, type Plan } from '@/services/plans.service';
+import { useIsReadOnly } from '@/hooks/useIsReadOnly';
 import type { Member } from '@/types/members.types';
 import type { Enrollment } from '@/types/enrollments.types';
 
@@ -35,6 +36,7 @@ const ViewMemberModal = ({ member, isOpen, onClose, onUpdate }: ViewMemberModalP
   const [isLoading, setIsLoading] = useState(false);
   const [isActionLoading, setIsActionLoading] = useState(false);
   const [renewingId, setRenewingId] = useState<number | null>(null);
+  const isReadOnly = useIsReadOnly();
 
   const fetchData = useCallback(async () => {
     if (!member?.id) return;
@@ -165,7 +167,7 @@ const ViewMemberModal = ({ member, isOpen, onClose, onUpdate }: ViewMemberModalP
                 <Button 
                   size="sm" 
                   className="gap-2" 
-                  disabled={!selectedPlanId || isActionLoading}
+                  disabled={!selectedPlanId || isActionLoading || isReadOnly}
                   onClick={handleSubscribe}
                 >
                   <PlusCircle className="h-4 w-4" />
@@ -218,9 +220,11 @@ const ViewMemberModal = ({ member, isOpen, onClose, onUpdate }: ViewMemberModalP
                         variant="outline"
                         className="h-8 text-[11px] border-primary text-primary hover:bg-primary hover:text-white"
                         onClick={() => handleRenew(enrollment.id)}
-                        disabled={isRenewing || isActionLoading}
+                        disabled={isRenewing || isActionLoading || isReadOnly}
                       >
-                        <RefreshCw className={`h-3 w-3 mr-1 ${isRenewing ? 'animate-spin' : ''}`} />
+                        {isReadOnly ? <Lock className="h-3 w-3 mr-1" /> : (
+                          <RefreshCw className={`h-3 w-3 mr-1 ${isRenewing ? 'animate-spin' : ''}`} />
+                        )}
                         Renovar
                       </Button>
                     </div>

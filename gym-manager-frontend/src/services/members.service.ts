@@ -17,7 +17,7 @@ export const membersService = {
     return data;
   },
 
-  async create(member: Omit<Member, 'id' | 'joinDate' | 'active'>): Promise<Member> {
+  async create(member: Omit<Member, 'id' | 'gymId' | 'joinDate' | 'active'>): Promise<Member> {
     const { data } = await apiClient.post<Member>('/members', member);
     return data;
   },

@@ -9,9 +9,10 @@ import {
 } from '@/components/ui/table';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Pencil, Plus, Loader2, Search } from 'lucide-react';
+import { Pencil, Plus, Loader2, Search, Lock } from 'lucide-react';
 import { plansService } from '@/services/plans.service';
 import type { Plan } from '@/services/plans.service';
+import { useIsReadOnly } from '@/hooks/useIsReadOnly';
 import PlanModal from '@/components/plans/PlanModal';
 
 const PlansPage = () => {
@@ -20,6 +21,7 @@ const PlansPage = () => {
   const [loading, setLoading] = useState(true);
   const [selectedPlan, setSelectedPlan] = useState<Plan | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const isReadOnly = useIsReadOnly();
 
   const fetchPlans = useCallback(async () => {
     try {
@@ -72,8 +74,8 @@ const PlansPage = () => {
               onChange={(e) => setSearch(e.target.value)}
             />
           </div>
-          <Button className="gap-2" onClick={handleAddPlan}>
-            <Plus className="h-4 w-4" />
+          <Button className="gap-2" onClick={handleAddPlan} disabled={isReadOnly}>
+            {isReadOnly ? <Lock className="h-4 w-4" /> : <Plus className="h-4 w-4" />}
             Nuevo Plan
           </Button>
         </div>
@@ -123,6 +125,7 @@ const PlansPage = () => {
                         size="icon"
                         title="Editar plan"
                         onClick={() => handleEditPlan(plan)}
+                        disabled={isReadOnly}
                       >
                         <Pencil className="h-4 w-4" />
                       </Button>
