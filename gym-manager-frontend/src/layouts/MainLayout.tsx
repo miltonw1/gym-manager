@@ -3,6 +3,7 @@ import { useAuthStore } from '@/store/useAuthStore';
 import { Button } from '@/components/ui/button';
 import { LogOut, LayoutGrid, CreditCard } from 'lucide-react';
 import ReadOnlyBanner from '@/components/billing/ReadOnlyBanner';
+import ThemeToggle from '@/components/theme/ThemeToggle';
 
 const MainLayout = () => {
   const navigate = useNavigate();
@@ -52,10 +53,14 @@ const MainLayout = () => {
           </div>
           <div className="flex flex-1 items-center justify-end space-x-2">
             <nav className="flex items-center">
-              <Button variant="ghost" size="sm" onClick={handleLogout} className="gap-2">
-                <LogOut className="h-4 w-4" />
-                <span className="hidden sm:inline">Cerrar Sesión</span>
-              </Button>
+              <div className="flex items-center">
+                <ThemeToggle />
+                <div className="h-5 w-px bg-border mx-2" aria-hidden="true" />
+                <Button variant="ghost" size="sm" onClick={handleLogout} className="gap-2">
+                  <LogOut className="h-4 w-4" />
+                  <span className="hidden sm:inline">Cerrar Sesión</span>
+                </Button>
+              </div>
             </nav>
           </div>
         </div>

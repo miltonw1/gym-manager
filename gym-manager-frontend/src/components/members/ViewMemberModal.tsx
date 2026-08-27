@@ -150,7 +150,7 @@ const ViewMemberModal = ({ member, isOpen, onClose, onUpdate }: ViewMemberModalP
               <p className="text-xs font-semibold text-primary uppercase">Contratar nuevo servicio</p>
               <div className="flex gap-2">
                 <Select value={selectedPlanId} onValueChange={setSelectedPlanId}>
-                  <SelectTrigger className="flex-1 bg-white">
+                  <SelectTrigger className="flex-1 bg-background">
                     <SelectValue placeholder="Seleccione un plan..." />
                   </SelectTrigger>
                   <SelectContent>

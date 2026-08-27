@@ -5,6 +5,18 @@
     <link rel="icon" type="image/svg+xml" href="/vite.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>gym-manager-frontend</title>
+    <script>
+      // Evita el "flash" de tema incorrecto al recargar: aplica la clase antes de montar React.
+      (function () {
+        try {
+          var t = localStorage.getItem('gym-manager-theme');
+          var dark = t
+            ? JSON.parse(t).state.theme === 'dark'
+            : window.matchMedia('(prefers-color-scheme: dark)').matches;
+          if (dark) document.documentElement.classList.add('dark');
+        } catch (e) {}
+      })();
+    </script>
   </head>
   <body>
     <div id="root"></div>

@@ -87,16 +87,16 @@ const DashboardPage = () => {
         </Card>
 
         <Card
-          className='cursor-pointer border-red-200 hover:bg-red-50/50 transition-colors'
+          className='cursor-pointer border-red-200 hover:bg-red-50/50 dark:border-red-900 dark:hover:bg-red-500/10 transition-colors'
           onClick={() => navigate('/dashboard/expired-members')}
         >
           <CardHeader className='flex flex-row items-center justify-between space-y-0 pb-2'>
-            <CardTitle className='text-sm font-medium text-red-600'>Vencidos (30d)</CardTitle>
+            <CardTitle className='text-sm font-medium text-red-600 dark:text-red-400'>Vencidos (30d)</CardTitle>
             <AlertTriangle className='h-4 w-4 text-red-500' />
           </CardHeader>
           <CardContent>
-            <div className='text-2xl font-bold text-red-700'>{loading ? '...' : expiredCount}</div>
-            <p className='text-xs text-red-600/80'>
+            <div className='text-2xl font-bold text-red-700 dark:text-red-400'>{loading ? '...' : expiredCount}</div>
+            <p className='text-xs text-red-600/80 dark:text-red-400/80'>
               Membresías que vencieron en los últimos 30 días
             </p>
           </CardContent>
