@@ -53,9 +53,9 @@ const MainLayout = () => {
           </div>
           <div className="flex flex-1 items-center justify-end space-x-2">
             <nav className="flex items-center">
-              <div className="flex items-center">
+              <div className="flex items-center gap-3">
                 <ThemeToggle />
-                <div className="h-5 w-px bg-border mx-2" aria-hidden="true" />
+                <div className="h-5 w-px bg-border" aria-hidden="true" />
                 <Button variant="ghost" size="sm" onClick={handleLogout} className="gap-2">
                   <LogOut className="h-4 w-4" />
                   <span className="hidden sm:inline">Cerrar Sesión</span>
