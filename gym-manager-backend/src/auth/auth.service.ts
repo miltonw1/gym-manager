@@ -3,13 +3,13 @@ import {
   ConflictException,
   ForbiddenException,
   Injectable,
-  Logger,
   UnauthorizedException,
 } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { UsersService } from '../users/users.service';
 import { PrismaService } from '../prisma/prisma.service';
 import { SubscriptionsService } from '../subscriptions/subscriptions.service';
+import { MailService } from '../mail/mail.service';
 import { RegisterDto } from './dto/register.dto';
 import { UserRole } from '@prisma/client';
 import * as bcrypt from 'bcrypt';
@@ -21,13 +21,12 @@ const RESET_TOKEN_TTL_MS = 60 * 60 * 1000; // 1 hora
 
 @Injectable()
 export class AuthService {
-  private readonly logger = new Logger(AuthService.name);
-
   constructor(
     private usersService: UsersService,
     private jwtService: JwtService,
     private prisma: PrismaService,
     private subscriptionsService: SubscriptionsService,
+    private mailService: MailService,
   ) {}
 
   async login(email: string, pass: string) {
@@ -121,8 +120,7 @@ export class AuthService {
     const frontendUrl = process.env.FRONTEND_URL || 'http://localhost:5173';
     const resetUrl = `${frontendUrl}/reset-password?token=${token}`;
 
-    // Opción B (sin servicio de email): logueamos el enlace en consola.
-    this.logger.log(`[Password Reset] ${user.email} -> ${resetUrl}`);
+    await this.mailService.sendPasswordResetEmail(user.email, resetUrl);
 
     return {
       message:
