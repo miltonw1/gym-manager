@@ -4,6 +4,7 @@ import { AuthService } from './auth.service';
 import { UsersService } from '../users/users.service';
 import { PrismaService } from '../prisma/prisma.service';
 import { SubscriptionsService } from '../subscriptions/subscriptions.service';
+import { MailService } from '../mail/mail.service';
 import { JwtService } from '@nestjs/jwt';
 import { UserRole } from '@prisma/client';
 
@@ -42,6 +43,10 @@ describe('AuthService', () => {
     signAsync: jest.fn(() => Promise.resolve('signed-token')),
   };
 
+  const mockMailService = {
+    sendPasswordResetEmail: jest.fn(),
+  };
+
   beforeEach(async () => {
     jest.clearAllMocks();
 
@@ -51,6 +56,7 @@ describe('AuthService', () => {
         { provide: UsersService, useValue: mockUsersService },
         { provide: PrismaService, useValue: mockPrismaService },
         { provide: SubscriptionsService, useValue: mockSubscriptionsService },
+        { provide: MailService, useValue: mockMailService },
         { provide: JwtService, useValue: mockJwtService },
       ],
     }).compile();
@@ -115,7 +121,10 @@ describe('AuthService', () => {
         daysRemaining: 20,
         active: true,
       });
-      mockPrismaService.gym.findUnique.mockResolvedValue({ id: 1, name: 'Gym Demo' });
+      mockPrismaService.gym.findUnique.mockResolvedValue({
+        id: 1,
+        name: 'Gym Demo',
+      });
 
       const result = await service.me(10);
       expect(result.user.email).toBe('owner@fit.com');
@@ -130,10 +139,13 @@ describe('AuthService', () => {
       mockPrismaService.user.findUnique.mockResolvedValue(null);
       const result = await service.forgotPassword('nobody@example.com');
       expect(result.message).toMatch(/si el email existe/i);
-      expect(mockPrismaService.passwordResetToken.create).not.toHaveBeenCalled();
+      expect(
+        mockPrismaService.passwordResetToken.create,
+      ).not.toHaveBeenCalled();
+      expect(mockMailService.sendPasswordResetEmail).not.toHaveBeenCalled();
     });
 
-    it('should create a reset token for an existing user', async () => {
+    it('should create a reset token and send an email for an existing user', async () => {
       mockPrismaService.user.findUnique.mockResolvedValue({
         id: 10,
         email: 'owner@fit.com',
@@ -141,8 +153,14 @@ describe('AuthService', () => {
       mockPrismaService.passwordResetToken.create.mockResolvedValue({ id: 1 });
 
       await service.forgotPassword('owner@fit.com');
-      expect(mockPrismaService.passwordResetToken.updateMany).toHaveBeenCalled();
+      expect(
+        mockPrismaService.passwordResetToken.updateMany,
+      ).toHaveBeenCalled();
       expect(mockPrismaService.passwordResetToken.create).toHaveBeenCalled();
+      expect(mockMailService.sendPasswordResetEmail).toHaveBeenCalledWith(
+        'owner@fit.com',
+        expect.stringContaining('/reset-password?token='),
+      );
     });
   });
 
@@ -170,7 +188,9 @@ describe('AuthService', () => {
         expiresAt: new Date(Date.now() - 60 * 60 * 1000),
       });
 
-      await expect(service.resetPassword('expired-token', 'newsecret123')).rejects.toThrow();
+      await expect(
+        service.resetPassword('expired-token', 'newsecret123'),
+      ).rejects.toThrow();
     });
 
     it('should throw BadRequestException when token is already used', async () => {
@@ -181,7 +201,9 @@ describe('AuthService', () => {
         expiresAt: new Date(Date.now() + 60 * 60 * 1000),
       });
 
-      await expect(service.resetPassword('used-token', 'newsecret123')).rejects.toThrow();
+      await expect(
+        service.resetPassword('used-token', 'newsecret123'),
+      ).rejects.toThrow();
     });
   });
 });
