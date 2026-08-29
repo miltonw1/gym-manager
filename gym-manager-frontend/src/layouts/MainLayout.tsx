@@ -3,6 +3,7 @@ import { useAuthStore } from '@/store/useAuthStore';
 import { Button } from '@/components/ui/button';
 import { LogOut, LayoutGrid, CreditCard } from 'lucide-react';
 import ReadOnlyBanner from '@/components/billing/ReadOnlyBanner';
+import SubscriptionDaysBadge from '@/components/billing/SubscriptionDaysBadge';
 import ThemeToggle from '@/components/theme/ThemeToggle';
 
 const MainLayout = () => {
@@ -48,6 +49,7 @@ const MainLayout = () => {
               >
                 <CreditCard className="h-4 w-4" />
                 Suscripción
+                <SubscriptionDaysBadge />
               </Link>
             </nav>
           </div>
