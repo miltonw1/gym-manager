@@ -1,7 +1,8 @@
 ﻿import { useEffect, useState, useMemo, useCallback } from 'react';
 import { membersService } from '@/services/members.service';
 import type { Member } from '@/types/members.types';
-import ExpiredMembersTable from '@/components/members/ExpiredMembersTable';
+import type { Enrollment } from '@/types/enrollments.types';
+import ExpiredMembersTable, { type ExpiredMembershipRow } from '@/components/members/ExpiredMembersTable';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Search, ChevronLeft, ChevronRight, ArrowLeft } from 'lucide-react';
@@ -32,20 +33,27 @@ const ExpiredMembersPage = () => {
     fetchExpired();
   }, [fetchExpired]);
 
-  const filteredMembers = useMemo(() => {
-    return members.filter((m) => {
-      const fullName = `${m.firstName} ${m.lastName}`.toLowerCase();
-      const dni = m.dni.toLowerCase();
-      const searchTerm = search.toLowerCase();
-      return fullName.includes(searchTerm) || dni.includes(searchTerm);
-    });
-  }, [members, search]);
+  const rows = useMemo<ExpiredMembershipRow[]>(() => {
+    return members.flatMap((member) =>
+      (member.enrollments ?? []).map((enrollment: Enrollment) => ({ member, enrollment }))
+    );
+  }, [members]);
 
-  const totalPages = Math.ceil(filteredMembers.length / take);
-  const paginatedMembers = useMemo(() => {
+  const filteredRows = useMemo(() => {
+    const searchTerm = search.toLowerCase();
+    return rows.filter(({ member, enrollment }) => {
+      const fullName = `${member.firstName} ${member.lastName}`.toLowerCase();
+      const dni = member.dni.toLowerCase();
+      const planName = enrollment.plan?.name?.toLowerCase() || '';
+      return fullName.includes(searchTerm) || dni.includes(searchTerm) || planName.includes(searchTerm);
+    });
+  }, [rows, search]);
+
+  const totalPages = Math.ceil(filteredRows.length / take);
+  const paginatedRows = useMemo(() => {
     const start = page * take;
-    return filteredMembers.slice(start, start + take);
-  }, [filteredMembers, page, take]);
+    return filteredRows.slice(start, start + take);
+  }, [filteredRows, page, take]);
 
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSearch(e.target.value);
@@ -76,7 +84,7 @@ const ExpiredMembersPage = () => {
       <div className='flex-1 rounded-xl bg-background border p-6 flex flex-col gap-4'>
         {loading ? (
           <div className='flex justify-center py-8'>Cargando...</div>
-        ) : filteredMembers.length === 0 ? (
+        ) : filteredRows.length === 0 ? (
           <div className='flex justify-center py-8 text-muted-foreground'>
             {search
               ? `No se encontraron resultados para '${search}'`
@@ -85,14 +93,14 @@ const ExpiredMembersPage = () => {
         ) : (
           <>
             <ExpiredMembersTable
-              members={paginatedMembers}
+              rows={paginatedRows}
               onUpdate={fetchExpired}
             />
 
             {totalPages > 1 && (
               <div className='mt-auto flex items-center justify-between px-2 pt-4 border-t'>
                 <div className='text-sm text-muted-foreground'>
-                  Mostrando {paginatedMembers.length} de {filteredMembers.length} socios
+                  Mostrando {paginatedRows.length} de {filteredRows.length} membresías
                 </div>
                 <div className='flex items-center space-x-2'>
                   <Button

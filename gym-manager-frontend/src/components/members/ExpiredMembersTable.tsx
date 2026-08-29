@@ -5,21 +5,27 @@ import { Eye, RefreshCw, Loader2 } from 'lucide-react';
 import { format, differenceInDays, parseISO } from 'date-fns';
 import { es } from 'date-fns/locale';
 import type { Member } from '@/types/members.types';
+import type { Enrollment } from '@/types/enrollments.types';
 import ViewMemberModal from './ViewMemberModal';
 import { enrollmentsService } from '@/services/enrollments.service';
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 
+export interface ExpiredMembershipRow {
+  member: Member;
+  enrollment: Enrollment;
+}
+
 interface ExpiredMembersTableProps {
-  members: Member[];
+  rows: ExpiredMembershipRow[];
   onUpdate?: () => void;
 }
 
-const ExpiredMembersTable = ({ members, onUpdate }: ExpiredMembersTableProps) => {
+const ExpiredMembersTable = ({ rows, onUpdate }: ExpiredMembersTableProps) => {
   const [selectedMember, setSelectedMember] = useState<Member | null>(null);
   const [isViewModalOpen, setIsViewModalOpen] = useState(false);
   const [renewingId, setRenewingId] = useState<number | null>(null);
   const [isConfirmOpen, setIsConfirmOpen] = useState(false);
-  const [enrollmentToRenew, setEnrollmentToRenew] = useState<{ id: number; name: string } | null>(null);
+  const [enrollmentToRenew, setEnrollmentToRenew] = useState<{ id: number; name: string; planName: string } | null>(null);
 
   const getDaysAgo = (endDate: string) => {
     const days = Math.abs(differenceInDays(parseISO(endDate), new Date()));
@@ -33,14 +39,14 @@ const ExpiredMembersTable = ({ members, onUpdate }: ExpiredMembersTableProps) =>
     setIsViewModalOpen(true);
   };
 
-  const handleOpenConfirm = (enrollmentId: number, memberName: string) => {
-    setEnrollmentToRenew({ id: enrollmentId, name: memberName });
+  const handleOpenConfirm = (enrollmentId: number, memberName: string, planName: string) => {
+    setEnrollmentToRenew({ id: enrollmentId, name: memberName, planName });
     setIsConfirmOpen(true);
   };
 
   const handleConfirmRenew = async () => {
     if (!enrollmentToRenew) return;
-    
+
     try {
       setRenewingId(enrollmentToRenew.id);
       setIsConfirmOpen(false);
@@ -61,45 +67,41 @@ const ExpiredMembersTable = ({ members, onUpdate }: ExpiredMembersTableProps) =>
         <TableHeader>
           <TableRow>
             <TableHead>Socio</TableHead>
-            <TableHead>Plan Anterior</TableHead>
+            <TableHead>Plan</TableHead>
             <TableHead>Fecha Vencimiento</TableHead>
             <TableHead>Estado</TableHead>
             <TableHead className='text-right'>Acciones</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
-          {members.map((member) => {
-            const lastEnrollment = member.enrollments?.[0];
-            const isRenewing = lastEnrollment ? renewingId === lastEnrollment.id : false;
+          {rows.map(({ member, enrollment }) => {
+            const isRenewing = renewingId === enrollment.id;
+            const memberName = `${member.firstName} ${member.lastName}`;
             return (
-              <TableRow key={member.id}>
-                <TableCell className='font-medium'>
-                  {member.firstName} {member.lastName}
-                </TableCell>
-                <TableCell>{lastEnrollment?.plan?.name || '-'}</TableCell>
+              <TableRow key={enrollment.id}>
+                <TableCell className='font-medium'>{memberName}</TableCell>
+                <TableCell>{enrollment.plan?.name || '-'}</TableCell>
                 <TableCell>
-                  {lastEnrollment ? format(parseISO(lastEnrollment.endDate), 'PP', { locale: es }) : '-'}
+                  {format(parseISO(enrollment.endDate), 'PP', { locale: es })}
                 </TableCell>
                 <TableCell className='text-red-600 dark:text-red-400 font-medium'>
-                  {lastEnrollment ? getDaysAgo(lastEnrollment.endDate) : '-'}
+                  {getDaysAgo(enrollment.endDate)}
                 </TableCell>
                 <TableCell className='text-right'>
                   <div className='flex justify-end gap-2'>
-                    {lastEnrollment && (
-                      <Button
-                        variant='ghost'
-                        size='icon'
-                        title='Renovación Rápida'
-                        disabled={isRenewing}
-                        onClick={() => handleOpenConfirm(lastEnrollment.id, `${member.firstName} ${member.lastName}`)}
-                      >
-                        {isRenewing ? (
-                          <Loader2 className='h-4 w-4 animate-spin text-primary' />
-                        ) : (
-                          <RefreshCw className='h-4 w-4 text-primary' />
-                        )}
-                      </Button>
-                    )}
+                    <Button
+                      variant='ghost'
+                      size='icon'
+                      title='Renovación Rápida'
+                      disabled={isRenewing}
+                      onClick={() => handleOpenConfirm(enrollment.id, memberName, enrollment.plan?.name || '')}
+                    >
+                      {isRenewing ? (
+                        <Loader2 className='h-4 w-4 animate-spin text-primary' />
+                      ) : (
+                        <RefreshCw className='h-4 w-4 text-primary' />
+                      )}
+                    </Button>
                     <Button
                       variant='ghost'
                       size='icon'
@@ -128,8 +130,9 @@ const ExpiredMembersTable = ({ members, onUpdate }: ExpiredMembersTableProps) =>
           <DialogHeader>
             <DialogTitle>Confirmar Renovación</DialogTitle>
             <DialogDescription>
-              ¿Estás seguro de que deseas renovar la membresía de {enrollmentToRenew?.name}?
-              Esta acción inscribirá al socio nuevamente en el mismo plan que tenía.
+              ¿Estás seguro de que deseas renovar la membresía de {enrollmentToRenew?.name} en el plan{' '}
+              {enrollmentToRenew?.planName}?
+              Esta acción inscribirá al socio nuevamente en ese plan.
             </DialogDescription>
           </DialogHeader>
           <DialogFooter>
