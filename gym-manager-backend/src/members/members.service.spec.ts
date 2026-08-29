@@ -147,8 +147,11 @@ describe('MembersService', () => {
         where: expect.objectContaining({
           gymId,
           enrollments: expect.objectContaining({
-            none: expect.objectContaining({
-              status: 'ACTIVE',
+            some: expect.objectContaining({
+              endDate: expect.objectContaining({
+                lt: expect.any(Date),
+                gte: expect.any(Date),
+              }),
             }),
           }),
         }),
