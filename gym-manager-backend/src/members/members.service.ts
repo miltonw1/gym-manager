@@ -182,7 +182,6 @@ export class MembersService {
             gte: thirtyDaysAgo,
           },
         },
-        none: { endDate: { gte: now }, status: 'ACTIVE' },
       },
     };
 
@@ -226,7 +225,6 @@ export class MembersService {
               gte: thirtyDaysAgo,
             },
           },
-          none: { endDate: { gte: now }, status: 'ACTIVE' },
         },
       },
     });
