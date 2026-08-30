@@ -22,7 +22,9 @@ describe('SubscriptionAccessInterceptor', () => {
 
   beforeEach(() => {
     jest.clearAllMocks();
-    interceptor = new SubscriptionAccessInterceptor(mockPrismaService as unknown as PrismaService);
+    interceptor = new SubscriptionAccessInterceptor(
+      mockPrismaService as unknown as PrismaService,
+    );
   });
 
   it('should allow public requests (no user)', () => {

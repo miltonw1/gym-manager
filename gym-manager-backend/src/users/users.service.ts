@@ -39,7 +39,7 @@ export class UsersService {
     if (gymId !== null) {
       where.gymId = gymId;
     }
-    
+
     return this.prisma.user.findMany({
       where,
       select: this.userSelect,
@@ -64,7 +64,11 @@ export class UsersService {
     return user;
   }
 
-  async update(id: number, gymId: number | null, updateUserDto: UpdateUserDto): Promise<UserResponseDto> {
+  async update(
+    id: number,
+    gymId: number | null,
+    updateUserDto: UpdateUserDto,
+  ): Promise<UserResponseDto> {
     const { password, ...userData } = updateUserDto;
 
     // Check if user exists first to throw proper error

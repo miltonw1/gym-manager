@@ -1,4 +1,8 @@
-import { Injectable, NotFoundException, ForbiddenException } from '@nestjs/common';
+import {
+  Injectable,
+  NotFoundException,
+  ForbiddenException,
+} from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { CreatePlanDto } from './dto/create-plan.dto';
 import { UpdatePlanDto } from './dto/update-plan.dto';
@@ -8,7 +12,10 @@ import { PlanResponseDto } from './dto/plan-response.dto';
 export class PlansService {
   constructor(private readonly prisma: PrismaService) {}
 
-  async create(gymId: number, createPlanDto: CreatePlanDto): Promise<PlanResponseDto> {
+  async create(
+    gymId: number,
+    createPlanDto: CreatePlanDto,
+  ): Promise<PlanResponseDto> {
     const { durationDays, ...rest } = createPlanDto;
     return this.prisma.plan.create({
       data: {
@@ -21,11 +28,11 @@ export class PlansService {
 
   async findAll(gymId: number | null): Promise<PlanResponseDto[]> {
     const whereCondition: any = { active: true };
-    
+
     if (gymId !== null && gymId !== undefined) {
       whereCondition.gymId = Number(gymId);
     }
-    
+
     return this.prisma.plan.findMany({
       where: whereCondition,
       orderBy: { name: 'asc' },
@@ -48,7 +55,11 @@ export class PlansService {
     return plan;
   }
 
-  async update(id: number, gymId: number | null, updatePlanDto: UpdatePlanDto): Promise<PlanResponseDto> {
+  async update(
+    id: number,
+    gymId: number | null,
+    updatePlanDto: UpdatePlanDto,
+  ): Promise<PlanResponseDto> {
     await this.findOne(id, gymId);
 
     return this.prisma.plan.update({

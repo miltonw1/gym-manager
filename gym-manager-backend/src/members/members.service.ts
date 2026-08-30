@@ -1,15 +1,25 @@
-import { Injectable, NotFoundException, ConflictException } from '@nestjs/common';
+import {
+  Injectable,
+  NotFoundException,
+  ConflictException,
+} from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { CreateMemberDto } from './dto/create-member.dto';
 import { UpdateMemberDto } from './dto/update-member.dto';
 import { MemberResponseDto } from './dto/member-response.dto';
-import { GetMembersQueryDto, MemberFilterStatus } from './dto/get-members-query.dto';
+import {
+  GetMembersQueryDto,
+  MemberFilterStatus,
+} from './dto/get-members-query.dto';
 
 @Injectable()
 export class MembersService {
   constructor(private prisma: PrismaService) {}
 
-  async create(gymId: number, createMemberDto: CreateMemberDto): Promise<MemberResponseDto> {
+  async create(
+    gymId: number,
+    createMemberDto: CreateMemberDto,
+  ): Promise<MemberResponseDto> {
     const existingMember = await this.prisma.member.findUnique({
       where: {
         gymId_dni: {
@@ -20,7 +30,9 @@ export class MembersService {
     });
 
     if (existingMember) {
-      throw new ConflictException(`Member with DNI ${createMemberDto.dni} already exists in this gym`);
+      throw new ConflictException(
+        `Member with DNI ${createMemberDto.dni} already exists in this gym`,
+      );
     }
 
     const { gymId: dtoGymId, ...memberData } = createMemberDto;
@@ -35,7 +47,7 @@ export class MembersService {
 
   async findAll(gymId: number | null, queryDto: GetMembersQueryDto) {
     const { skip = 0, take = 10, search, status } = queryDto;
-    
+
     const where: any = {};
     if (gymId !== null) {
       where.gymId = gymId;
@@ -64,7 +76,7 @@ export class MembersService {
         const twoMonthsAgo = new Date();
         twoMonthsAgo.setMonth(now.getMonth() - 2);
         where.enrollments = {
-            none: { endDate: { gte: twoMonthsAgo } }
+          none: { endDate: { gte: twoMonthsAgo } },
         };
       }
     }
@@ -79,8 +91,8 @@ export class MembersService {
           enrollments: {
             where: { status: 'ACTIVE' },
             orderBy: { endDate: 'desc' },
-            select: { endDate: true }
-          }
+            select: { endDate: true },
+          },
         },
         orderBy: { lastName: 'asc' },
       }),
@@ -94,22 +106,31 @@ export class MembersService {
       total,
       skip: Number(skip),
       take: Number(take),
-      members: members.map(m => {
-        const activeEnrollments = m.enrollments.filter(e => new Date(e.endDate) >= now);
-        const expiredEnrollments = m.enrollments.filter(e => new Date(e.endDate) < now);
+      members: members.map((m) => {
+        const activeEnrollments = m.enrollments.filter(
+          (e) => new Date(e.endDate) >= now,
+        );
+        const expiredEnrollments = m.enrollments.filter(
+          (e) => new Date(e.endDate) < now,
+        );
         const hasActive = activeEnrollments.length > 0;
 
-        const sortedDesc = [...m.enrollments].sort((a, b) =>
-          new Date(b.endDate).getTime() - new Date(a.endDate).getTime()
+        const sortedDesc = [...m.enrollments].sort(
+          (a, b) =>
+            new Date(b.endDate).getTime() - new Date(a.endDate).getTime(),
         );
         const lastExpiry = sortedDesc[0]?.endDate || null;
 
-        const sortedAsc = [...activeEnrollments].sort((a, b) =>
-          new Date(a.endDate).getTime() - new Date(b.endDate).getTime()
+        const sortedAsc = [...activeEnrollments].sort(
+          (a, b) =>
+            new Date(a.endDate).getTime() - new Date(b.endDate).getTime(),
         );
         const nearestExpiry = sortedAsc[0]?.endDate || null;
 
-        const isExpiringSoon = hasActive && nearestExpiry && new Date(nearestExpiry) <= sevenDaysFromNow;
+        const isExpiringSoon =
+          hasActive &&
+          nearestExpiry &&
+          new Date(nearestExpiry) <= sevenDaysFromNow;
 
         let status: string;
         if (m.enrollments.length === 0) {
@@ -128,7 +149,7 @@ export class MembersService {
           nextExpiryDate: lastExpiry,
           nearestExpiryDate: nearestExpiry,
           expiredEnrollmentCount: expiredEnrollments.length,
-          enrollments: undefined
+          enrollments: undefined,
         };
       }),
     };
@@ -151,7 +172,11 @@ export class MembersService {
     return member;
   }
 
-  async update(id: number, gymId: number | null, updateMemberDto: UpdateMemberDto): Promise<MemberResponseDto> {
+  async update(
+    id: number,
+    gymId: number | null,
+    updateMemberDto: UpdateMemberDto,
+  ): Promise<MemberResponseDto> {
     await this.findOne(id, gymId);
 
     return this.prisma.member.update({

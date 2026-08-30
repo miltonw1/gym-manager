@@ -1,4 +1,10 @@
-import { IsInt, IsNotEmpty, IsDateString, IsOptional, IsEnum } from 'class-validator';
+import {
+  IsInt,
+  IsNotEmpty,
+  IsDateString,
+  IsOptional,
+  IsEnum,
+} from 'class-validator';
 import { EnrollmentStatus } from '@prisma/client';
 
 export class CreateEnrollmentDto {

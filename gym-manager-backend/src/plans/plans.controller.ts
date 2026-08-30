@@ -38,7 +38,9 @@ export class PlansController {
   }
 
   @Get()
-  findAll(@GetUser('gymId') tokenGymId: number | null): Promise<PlanResponseDto[]> {
+  findAll(
+    @GetUser('gymId') tokenGymId: number | null,
+  ): Promise<PlanResponseDto[]> {
     return this.plansService.findAll(tokenGymId);
   }
 

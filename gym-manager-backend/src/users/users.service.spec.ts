@@ -38,7 +38,7 @@ describe('UsersService', () => {
 
     service = module.get<UsersService>(UsersService);
     prisma = module.get<PrismaService>(PrismaService);
-    
+
     // Reset mocks
     jest.clearAllMocks();
   });
@@ -57,7 +57,7 @@ describe('UsersService', () => {
 
       const hashedPassword = 'hashed_password';
       (bcrypt.hash as jest.Mock).mockResolvedValue(hashedPassword);
-      
+
       mockPrismaService.user.create.mockResolvedValue({
         id: 1,
         email: createUserDto.email,
@@ -89,8 +89,20 @@ describe('UsersService', () => {
   describe('findAll', () => {
     it('should return an array of users', async () => {
       const users = [
-        { id: 1, email: 'user1@example.com', gymId: 1, role: UserRole.STAFF, createdAt: new Date() },
-        { id: 2, email: 'user2@example.com', gymId: 1, role: UserRole.STAFF, createdAt: new Date() },
+        {
+          id: 1,
+          email: 'user1@example.com',
+          gymId: 1,
+          role: UserRole.STAFF,
+          createdAt: new Date(),
+        },
+        {
+          id: 2,
+          email: 'user2@example.com',
+          gymId: 1,
+          role: UserRole.STAFF,
+          createdAt: new Date(),
+        },
       ];
       mockPrismaService.user.findMany.mockResolvedValue(users);
 
@@ -106,7 +118,13 @@ describe('UsersService', () => {
 
   describe('findOne', () => {
     it('should return a single user', async () => {
-      const user = { id: 1, email: 'test@example.com', gymId: 1, role: UserRole.STAFF, createdAt: new Date() };
+      const user = {
+        id: 1,
+        email: 'test@example.com',
+        gymId: 1,
+        role: UserRole.STAFF,
+        createdAt: new Date(),
+      };
       mockPrismaService.user.findUnique.mockResolvedValue(user);
 
       const result = await service.findOne(1, 1);
@@ -121,17 +139,28 @@ describe('UsersService', () => {
     it('should throw NotFoundException if user not found', async () => {
       mockPrismaService.user.findUnique.mockResolvedValue(null);
 
-      await expect(service.findOne(1, 1)).rejects.toThrow('User with ID 1 not found in this gym');
+      await expect(service.findOne(1, 1)).rejects.toThrow(
+        'User with ID 1 not found in this gym',
+      );
     });
   });
 
   describe('update', () => {
     it('should update a user without password', async () => {
-      const user = { id: 1, email: 'old@example.com', gymId: 1, role: UserRole.STAFF, createdAt: new Date() };
+      const user = {
+        id: 1,
+        email: 'old@example.com',
+        gymId: 1,
+        role: UserRole.STAFF,
+        createdAt: new Date(),
+      };
       const updateDto = { email: 'new@example.com' };
-      
+
       mockPrismaService.user.findUnique.mockResolvedValue(user);
-      mockPrismaService.user.update.mockResolvedValue({ ...user, email: updateDto.email });
+      mockPrismaService.user.update.mockResolvedValue({
+        ...user,
+        email: updateDto.email,
+      });
 
       const result = await service.update(1, 1, updateDto);
 
@@ -144,10 +173,16 @@ describe('UsersService', () => {
     });
 
     it('should update a user with password', async () => {
-      const user = { id: 1, email: 'test@example.com', gymId: 1, role: UserRole.STAFF, createdAt: new Date() };
+      const user = {
+        id: 1,
+        email: 'test@example.com',
+        gymId: 1,
+        role: UserRole.STAFF,
+        createdAt: new Date(),
+      };
       const updateDto = { password: 'newpassword' };
       const hashedPassword = 'new_hashed_password';
-      
+
       (bcrypt.hash as jest.Mock).mockResolvedValue(hashedPassword);
       mockPrismaService.user.findUnique.mockResolvedValue(user);
       mockPrismaService.user.update.mockResolvedValue(user);
@@ -171,7 +206,13 @@ describe('UsersService', () => {
 
   describe('remove', () => {
     it('should delete a user', async () => {
-      const user = { id: 1, email: 'test@example.com', gymId: 1, role: UserRole.STAFF, createdAt: new Date() };
+      const user = {
+        id: 1,
+        email: 'test@example.com',
+        gymId: 1,
+        role: UserRole.STAFF,
+        createdAt: new Date(),
+      };
       mockPrismaService.user.findUnique.mockResolvedValue(user);
       mockPrismaService.user.delete.mockResolvedValue(user);
 
