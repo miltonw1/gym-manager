@@ -21,14 +21,12 @@ describe('PlansController', () => {
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       controllers: [PlansController],
-      providers: [
-        { provide: PlansService, useValue: mockPlansService },
-      ],
+      providers: [{ provide: PlansService, useValue: mockPlansService }],
     }).compile();
 
     controller = module.get<PlansController>(PlansController);
     service = module.get<PlansService>(PlansService);
-    
+
     jest.clearAllMocks();
   });
 
@@ -40,7 +38,12 @@ describe('PlansController', () => {
     it('should create a plan using gymId from token', async () => {
       const tokenGymId = 1;
       const dto: CreatePlanDto = { name: 'Monthly', price: 100 };
-      const expectedResult = { id: 1, ...dto, gymId: tokenGymId, price: new Prisma.Decimal(100) };
+      const expectedResult = {
+        id: 1,
+        ...dto,
+        gymId: tokenGymId,
+        price: new Prisma.Decimal(100),
+      };
       mockPlansService.create.mockResolvedValue(expectedResult);
 
       const result = await controller.create(tokenGymId, dto);
@@ -63,7 +66,7 @@ describe('PlansController', () => {
 
     it('should throw ConflictException if no gymId is provided', () => {
       const dto: CreatePlanDto = { name: 'Monthly', price: 100 };
-      
+
       expect(() => controller.create(null, dto)).toThrow(ConflictException);
     });
   });

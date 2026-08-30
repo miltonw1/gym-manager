@@ -32,7 +32,9 @@ export class EnrollmentsController {
   }
 
   @Get()
-  findAll(@GetUser('gymId') gymId: number | null): Promise<EnrollmentResponseDto[]> {
+  findAll(
+    @GetUser('gymId') gymId: number | null,
+  ): Promise<EnrollmentResponseDto[]> {
     return this.enrollmentsService.findAll(gymId);
   }
 

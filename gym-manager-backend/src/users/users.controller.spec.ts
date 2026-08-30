@@ -19,9 +19,7 @@ describe('UsersController', () => {
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       controllers: [UsersController],
-      providers: [
-        { provide: UsersService, useValue: mockUsersService },
-      ],
+      providers: [{ provide: UsersService, useValue: mockUsersService }],
     }).compile();
 
     controller = module.get<UsersController>(UsersController);
@@ -34,7 +32,10 @@ describe('UsersController', () => {
 
   describe('create', () => {
     it('should create a user', async () => {
-      const dto: CreateUserDto = { email: 'test@test.com', password: 'password' };
+      const dto: CreateUserDto = {
+        email: 'test@test.com',
+        password: 'password',
+      };
       const gymId = 1;
       mockUsersService.create.mockResolvedValue({ id: 1, ...dto, gymId });
 
@@ -49,7 +50,7 @@ describe('UsersController', () => {
     it('should return all users for a gym', async () => {
       const gymId = 1;
       mockUsersService.findAll.mockResolvedValue([]);
-      
+
       const result = await controller.findAll(gymId);
 
       expect(service.findAll).toHaveBeenCalledWith(gymId);

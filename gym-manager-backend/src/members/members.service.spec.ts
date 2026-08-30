@@ -41,7 +41,13 @@ describe('MembersService', () => {
       const gymId = 1;
       const dto = { firstName: 'John', lastName: 'Doe', dni: '12345678' };
       mockPrismaService.member.findUnique.mockResolvedValue(null);
-      mockPrismaService.member.create.mockResolvedValue({ id: 1, ...dto, gymId, joinDate: new Date(), active: true });
+      mockPrismaService.member.create.mockResolvedValue({
+        id: 1,
+        ...dto,
+        gymId,
+        joinDate: new Date(),
+        active: true,
+      });
 
       const result = await service.create(gymId, dto);
 
@@ -49,7 +55,7 @@ describe('MembersService', () => {
         data: {
           ...dto,
           gymId,
-        }
+        },
       });
       expect(result.dni).toEqual(dto.dni);
     });
@@ -57,9 +63,15 @@ describe('MembersService', () => {
     it('should throw ConflictException if DNI already exists in the gym', async () => {
       const gymId = 1;
       const dto = { firstName: 'John', lastName: 'Doe', dni: '12345678' };
-      mockPrismaService.member.findUnique.mockResolvedValue({ id: 1, ...dto, gymId });
+      mockPrismaService.member.findUnique.mockResolvedValue({
+        id: 1,
+        ...dto,
+        gymId,
+      });
 
-      await expect(service.create(gymId, dto)).rejects.toThrow(ConflictException);
+      await expect(service.create(gymId, dto)).rejects.toThrow(
+        ConflictException,
+      );
     });
   });
 
@@ -88,7 +100,9 @@ describe('MembersService', () => {
 
       const result = await service.findOne(memberId, gymId);
 
-      expect(prisma.member.findFirst).toHaveBeenCalledWith({ where: { id: memberId, gymId } });
+      expect(prisma.member.findFirst).toHaveBeenCalledWith({
+        where: { id: memberId, gymId },
+      });
       expect(result).toEqual(member);
     });
 
@@ -129,7 +143,7 @@ describe('MembersService', () => {
       const result = await service.remove(memberId, gymId);
 
       expect(prisma.member.delete).toHaveBeenCalledWith({
-        where: { id: memberId }
+        where: { id: memberId },
       });
       expect(result).toEqual(member);
     });
@@ -138,24 +152,28 @@ describe('MembersService', () => {
   describe('findRecentlyExpiredMembers', () => {
     it('should return members whose memberships expired in the last 30 days', async () => {
       const gymId = 1;
-      const expiredMembers = [{ id: 1, firstName: 'Expired', lastName: 'Member' }];
+      const expiredMembers = [
+        { id: 1, firstName: 'Expired', lastName: 'Member' },
+      ];
       mockPrismaService.member.findMany.mockResolvedValue(expiredMembers);
 
       const result = await service.findRecentlyExpiredMembers(gymId);
 
-      expect(prisma.member.findMany).toHaveBeenCalledWith(expect.objectContaining({
-        where: expect.objectContaining({
-          gymId,
-          enrollments: expect.objectContaining({
-            some: expect.objectContaining({
-              endDate: expect.objectContaining({
-                lt: expect.any(Date),
-                gte: expect.any(Date),
+      expect(prisma.member.findMany).toHaveBeenCalledWith(
+        expect.objectContaining({
+          where: expect.objectContaining({
+            gymId,
+            enrollments: expect.objectContaining({
+              some: expect.objectContaining({
+                endDate: expect.objectContaining({
+                  lt: expect.any(Date),
+                  gte: expect.any(Date),
+                }),
               }),
             }),
           }),
         }),
-      }));
+      );
       expect(result).toEqual(expiredMembers);
     });
   });

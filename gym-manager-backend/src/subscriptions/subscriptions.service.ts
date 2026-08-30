@@ -98,7 +98,10 @@ export class SubscriptionsService {
       include: { plan: true },
     });
 
-    const results: Array<{ subscriptionId: number; status: SubscriptionStatus }> = [];
+    const results: Array<{
+      subscriptionId: number;
+      status: SubscriptionStatus;
+    }> = [];
 
     for (const subscription of pending) {
       if (!subscription.externalReference) {
@@ -111,7 +114,10 @@ export class SubscriptionsService {
         );
 
         if (payments.length === 0) {
-          results.push({ subscriptionId: subscription.id, status: subscription.status });
+          results.push({
+            subscriptionId: subscription.id,
+            status: subscription.status,
+          });
           continue;
         }
 
@@ -122,11 +128,19 @@ export class SubscriptionsService {
         );
         results.push({
           subscriptionId: subscription.id,
-          status: (payments[0].status as SubscriptionStatus) ?? SubscriptionStatus.PENDING,
+          status:
+            (payments[0].status as SubscriptionStatus) ??
+            SubscriptionStatus.PENDING,
         });
       } catch (error) {
-        this.logger.error(`Error reconciling subscription ${subscription.id}`, error);
-        results.push({ subscriptionId: subscription.id, status: subscription.status });
+        this.logger.error(
+          `Error reconciling subscription ${subscription.id}`,
+          error,
+        );
+        results.push({
+          subscriptionId: subscription.id,
+          status: subscription.status,
+        });
       }
     }
 

@@ -57,7 +57,11 @@ describe('GymsService', () => {
         email: 'gym@test.com',
       };
 
-      const expectedResponse = { id: 1, ...createGymDto, createdAt: new Date() };
+      const expectedResponse = {
+        id: 1,
+        ...createGymDto,
+        createdAt: new Date(),
+      };
       mockPrismaService.gym.create.mockResolvedValue(expectedResponse);
 
       const result = await service.create(createGymDto);
@@ -112,7 +116,7 @@ describe('GymsService', () => {
     it('should update a gym', async () => {
       const gym = { id: 1, name: 'Old Name' };
       const updateDto = { name: 'New Name' };
-      
+
       mockPrismaService.gym.findUnique.mockResolvedValue(gym);
       mockPrismaService.gym.update.mockResolvedValue({ ...gym, ...updateDto });
 

@@ -1,7 +1,11 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { EnrollmentsService } from './enrollments.service';
 import { PrismaService } from '../prisma/prisma.service';
-import { NotFoundException, ForbiddenException, BadRequestException } from '@nestjs/common';
+import {
+  NotFoundException,
+  ForbiddenException,
+  BadRequestException,
+} from '@nestjs/common';
 import { EnrollmentStatus } from '@prisma/client';
 
 describe('EnrollmentsService', () => {
@@ -47,16 +51,22 @@ describe('EnrollmentsService', () => {
     const memberId = 1;
     const planId = 1;
     const mockMember = { id: memberId, gymId, firstName: 'John' };
-    const mockPlan = { id: planId, gymId, name: 'Monthly', price: 50.0, durationDays: 30 };
+    const mockPlan = {
+      id: planId,
+      gymId,
+      name: 'Monthly',
+      price: 50.0,
+      durationDays: 30,
+    };
 
     it('should create a new enrollment and a payment starting today if no active enrollment exists', async () => {
       mockPrismaService.member.findUnique.mockResolvedValue(mockMember);
       mockPrismaService.plan.findUnique.mockResolvedValue(mockPlan);
       mockPrismaService.enrollment.findFirst.mockResolvedValue(null);
-      
+
       const dto = { memberId, planId };
       const now = new Date();
-      
+
       mockPrismaService.enrollment.create.mockImplementation(({ data }) => ({
         id: 1,
         ...data,
@@ -69,18 +79,20 @@ describe('EnrollmentsService', () => {
         data: {
           enrollmentId: 1,
           amount: mockPlan.price,
-        }
+        },
       });
-      expect(result.startDate.getTime()).toBeGreaterThanOrEqual(now.getTime() - 1000);
+      expect(result.startDate.getTime()).toBeGreaterThanOrEqual(
+        now.getTime() - 1000,
+      );
     });
 
     it('should chain enrollment if an active one exists (Automatic Renewal)', async () => {
       mockPrismaService.member.findUnique.mockResolvedValue(mockMember);
       mockPrismaService.plan.findUnique.mockResolvedValue(mockPlan);
-      
+
       const existingEndDate = new Date();
       existingEndDate.setDate(existingEndDate.getDate() + 10); // Expira en 10 días
-      
+
       mockPrismaService.enrollment.findFirst.mockResolvedValue({
         id: 100,
         endDate: existingEndDate,
@@ -88,7 +100,7 @@ describe('EnrollmentsService', () => {
       });
 
       const dto = { memberId, planId };
-      
+
       mockPrismaService.enrollment.create.mockImplementation(({ data }) => ({
         id: 101,
         ...data,
@@ -97,19 +109,28 @@ describe('EnrollmentsService', () => {
       const result = await service.create(gymId, dto);
 
       // La nueva inscripción debe empezar exactamente cuando termina la anterior
-      expect(result.startDate.toISOString()).toBe(existingEndDate.toISOString());
-      
+      expect(result.startDate.toISOString()).toBe(
+        existingEndDate.toISOString(),
+      );
+
       // La fecha de fin debe ser startDate + 30 días
       const expectedEndDate = new Date(existingEndDate);
-      expectedEndDate.setDate(expectedEndDate.getDate() + mockPlan.durationDays);
+      expectedEndDate.setDate(
+        expectedEndDate.getDate() + mockPlan.durationDays,
+      );
       expect(result.endDate.toISOString()).toBe(expectedEndDate.toISOString());
     });
 
     it('should throw ForbiddenException if member belongs to another gym', async () => {
-        mockPrismaService.member.findUnique.mockResolvedValue({ ...mockMember, gymId: 2 });
-        mockPrismaService.plan.findUnique.mockResolvedValue(mockPlan);
+      mockPrismaService.member.findUnique.mockResolvedValue({
+        ...mockMember,
+        gymId: 2,
+      });
+      mockPrismaService.plan.findUnique.mockResolvedValue(mockPlan);
 
-        await expect(service.create(gymId, { memberId, planId })).rejects.toThrow(ForbiddenException);
+      await expect(service.create(gymId, { memberId, planId })).rejects.toThrow(
+        ForbiddenException,
+      );
     });
   });
 
@@ -118,8 +139,11 @@ describe('EnrollmentsService', () => {
       const gymId = 1;
       const memberId = 1;
       const enrollments = [{ id: 1, memberId, planId: 1 }];
-      
-      mockPrismaService.member.findUnique.mockResolvedValue({ id: memberId, gymId });
+
+      mockPrismaService.member.findUnique.mockResolvedValue({
+        id: memberId,
+        gymId,
+      });
       mockPrismaService.enrollment.findMany.mockResolvedValue(enrollments);
 
       const result = await service.findByMember(memberId, gymId);
@@ -133,15 +157,22 @@ describe('EnrollmentsService', () => {
     });
 
     it('should throw ForbiddenException if member belongs to another gym', async () => {
-      mockPrismaService.member.findUnique.mockResolvedValue({ id: 1, gymId: 2 });
+      mockPrismaService.member.findUnique.mockResolvedValue({
+        id: 1,
+        gymId: 2,
+      });
 
-      await expect(service.findByMember(1, 1)).rejects.toThrow(ForbiddenException);
+      await expect(service.findByMember(1, 1)).rejects.toThrow(
+        ForbiddenException,
+      );
     });
 
     it('should throw NotFoundException if member not found', async () => {
       mockPrismaService.member.findUnique.mockResolvedValue(null);
 
-      await expect(service.findByMember(1, 1)).rejects.toThrow(NotFoundException);
+      await expect(service.findByMember(1, 1)).rejects.toThrow(
+        NotFoundException,
+      );
     });
   });
 
@@ -150,7 +181,7 @@ describe('EnrollmentsService', () => {
       const gymId = 1;
       const days = 7;
       const enrollments = [{ id: 1, endDate: new Date() }];
-      
+
       mockPrismaService.enrollment.findMany.mockResolvedValue(enrollments);
 
       const result = await service.findExpiring(gymId, days);

@@ -39,7 +39,14 @@ describe('PlansService', () => {
     it('should create a plan', async () => {
       const gymId = 1;
       const dto = { name: 'Monthly', price: 100, durationDays: 30 };
-      const expectedPlan = { id: 1, ...dto, price: new Prisma.Decimal(100), gymId, active: true, createdAt: new Date() };
+      const expectedPlan = {
+        id: 1,
+        ...dto,
+        price: new Prisma.Decimal(100),
+        gymId,
+        active: true,
+        createdAt: new Date(),
+      };
       mockPrismaService.plan.create.mockResolvedValue(expectedPlan);
 
       const result = await service.create(gymId, dto);
@@ -48,7 +55,7 @@ describe('PlansService', () => {
         data: {
           ...dto,
           gymId,
-        }
+        },
       });
       expect(result).toEqual(expectedPlan);
     });
@@ -56,7 +63,15 @@ describe('PlansService', () => {
     it('should default durationDays to 30 if not provided', async () => {
       const gymId = 1;
       const dto = { name: 'Monthly', price: 100 } as any;
-      const expectedPlan = { id: 1, ...dto, durationDays: 30, price: new Prisma.Decimal(100), gymId, active: true, createdAt: new Date() };
+      const expectedPlan = {
+        id: 1,
+        ...dto,
+        durationDays: 30,
+        price: new Prisma.Decimal(100),
+        gymId,
+        active: true,
+        createdAt: new Date(),
+      };
       mockPrismaService.plan.create.mockResolvedValue(expectedPlan);
 
       await service.create(gymId, dto);
@@ -66,7 +81,7 @@ describe('PlansService', () => {
           ...dto,
           durationDays: 30,
           gymId,
-        }
+        },
       });
     });
   });
@@ -109,7 +124,9 @@ describe('PlansService', () => {
 
       const result = await service.findOne(planId, gymId);
 
-      expect(prisma.plan.findUnique).toHaveBeenCalledWith({ where: { id: planId } });
+      expect(prisma.plan.findUnique).toHaveBeenCalledWith({
+        where: { id: planId },
+      });
       expect(result).toEqual(plan);
     });
 
@@ -125,7 +142,9 @@ describe('PlansService', () => {
       const plan = { id: planId, name: 'Plan 1', gymId: 2 };
       mockPrismaService.plan.findUnique.mockResolvedValue(plan);
 
-      await expect(service.findOne(planId, gymId)).rejects.toThrow(ForbiddenException);
+      await expect(service.findOne(planId, gymId)).rejects.toThrow(
+        ForbiddenException,
+      );
     });
 
     it('should allow access if gymId is null (e.g. Super Admin)', async () => {
@@ -164,13 +183,16 @@ describe('PlansService', () => {
       const planId = 1;
       const plan = { id: planId, name: 'Plan 1', gymId, active: true };
       mockPrismaService.plan.findUnique.mockResolvedValue(plan);
-      mockPrismaService.plan.update.mockResolvedValue({ ...plan, active: false });
+      mockPrismaService.plan.update.mockResolvedValue({
+        ...plan,
+        active: false,
+      });
 
       const result = await service.remove(planId, gymId);
 
       expect(prisma.plan.update).toHaveBeenCalledWith({
         where: { id: planId },
-        data: { active: false }
+        data: { active: false },
       });
       expect(result.active).toBe(false);
     });

@@ -6,64 +6,67 @@ import { GymResponseDto } from './dto/gym-response.dto';
 
 @Injectable()
 export class GymsService {
-    constructor(private prisma: PrismaService) { }
+  constructor(private prisma: PrismaService) {}
 
-    private readonly gymSelect = {
-        id: true,
-        name: true,
-        street: true,
-        city: true,
-        province: true,
-        country: true,
-        phone: true,
-        email: true,
-        createdAt: true,
-    };
+  private readonly gymSelect = {
+    id: true,
+    name: true,
+    street: true,
+    city: true,
+    province: true,
+    country: true,
+    phone: true,
+    email: true,
+    createdAt: true,
+  };
 
-    async create(createGymDto: CreateGymDto): Promise<GymResponseDto> {
-        const gym = await this.prisma.gym.create({
-            data: createGymDto,
-            select: this.gymSelect,
-        });
+  async create(createGymDto: CreateGymDto): Promise<GymResponseDto> {
+    const gym = await this.prisma.gym.create({
+      data: createGymDto,
+      select: this.gymSelect,
+    });
 
-        return gym;
+    return gym;
+  }
+
+  async findAll(): Promise<GymResponseDto[]> {
+    return this.prisma.gym.findMany({
+      select: this.gymSelect,
+    });
+  }
+
+  async findOne(id: number): Promise<GymResponseDto> {
+    const gym = await this.prisma.gym.findUnique({
+      where: { id },
+      select: this.gymSelect,
+    });
+
+    if (!gym) {
+      throw new NotFoundException(`Gym with ID ${id} not found`);
     }
 
-    async findAll(): Promise<GymResponseDto[]> {
-        return this.prisma.gym.findMany({
-            select: this.gymSelect,
-        });
-    }
+    return gym;
+  }
 
-    async findOne(id: number): Promise<GymResponseDto> {
-        const gym = await this.prisma.gym.findUnique({
-            where: { id },
-            select: this.gymSelect,
-        });
+  async update(
+    id: number,
+    updateGymDto: UpdateGymDto,
+  ): Promise<GymResponseDto> {
+    await this.findOne(id);
 
-        if (!gym) {
-            throw new NotFoundException(`Gym with ID ${id} not found`);
-        }
+    return this.prisma.gym.update({
+      where: { id },
+      data: updateGymDto,
+      select: this.gymSelect,
+    });
+  }
 
-        return gym;
-    }
+  async remove(id: number): Promise<GymResponseDto> {
+    await this.findOne(id);
 
-    async update(id: number, updateGymDto: UpdateGymDto): Promise<GymResponseDto> {
-        await this.findOne(id);
-
-        return this.prisma.gym.update({
-            where: { id },
-            data: updateGymDto,
-            select: this.gymSelect,
-        });
-    }
-
-    async remove(id: number): Promise<GymResponseDto> {
-        await this.findOne(id);
-
-        return this.prisma.gym.delete({
-            where: { id },
-            select: this.gymSelect,
-        });
-    }
+    return this.prisma.gym.delete({
+      where: { id },
+      select: this.gymSelect,
+    });
+  }
 }

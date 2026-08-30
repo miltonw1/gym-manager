@@ -1,4 +1,14 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, ParseIntPipe } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+  UseGuards,
+  ParseIntPipe,
+} from '@nestjs/common';
 import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
@@ -18,13 +28,13 @@ export class UsersController {
   @Roles(UserRole.ADMIN)
   create(
     @GetUser('gymId') tokenGymId: number | null,
-    @Body() createUserDto: CreateUserDto
+    @Body() createUserDto: CreateUserDto,
   ): Promise<UserResponseDto> {
     // Lógica de seguridad:
     // 1. Si el token tiene gymId (Staff/Admin de sucursal), lo forzamos.
     // 2. Si el token NO tiene gymId (Admin Global), usamos el del DTO.
     const finalGymId = tokenGymId ?? createUserDto.gymId;
-    
+
     if (!createUserDto.role) {
       createUserDto.role = UserRole.STAFF;
     }
@@ -34,10 +44,12 @@ export class UsersController {
 
   @Get()
   @Roles(UserRole.ADMIN)
-  findAll(@GetUser('gymId') tokenGymId: number | null): Promise<UserResponseDto[]> {
-    // Para listar, si es Admin Global (null) y no se pasa gymId, 
+  findAll(
+    @GetUser('gymId') tokenGymId: number | null,
+  ): Promise<UserResponseDto[]> {
+    // Para listar, si es Admin Global (null) y no se pasa gymId,
     // tal vez queramos todos, pero por ahora mantenemos la consistencia.
-    // Nota: El servicio findAll espera un number, así que si es null, 
+    // Nota: El servicio findAll espera un number, así que si es null,
     // fallará a menos que lo manejemos.
     return this.usersService.findAll(tokenGymId);
   }
