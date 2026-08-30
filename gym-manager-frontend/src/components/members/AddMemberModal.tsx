@@ -26,7 +26,7 @@ const memberSchema = z.object({
   firstName: z.string().min(2, 'El nombre debe tener al menos 2 caracteres'),
   lastName: z.string().min(2, 'El apellido debe tener al menos 2 caracteres'),
   dni: z.string().min(6, 'DNI inválido').max(15, 'DNI demasiado largo'),
-  phone: z.string().optional(),
+  phone: z.string().optional().or(z.literal('')),
   email: z.string().email('Email inválido').optional().or(z.literal('')),
 });
 

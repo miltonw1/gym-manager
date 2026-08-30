@@ -1,3 +1,4 @@
+import { Transform } from 'class-transformer';
 import {
   IsEmail,
   IsNotEmpty,
@@ -26,10 +27,12 @@ export class CreateMemberDto {
 
   @IsString()
   @IsOptional()
+  @Transform(({ value }) => (value === '' ? null : value))
   phone?: string;
 
   @IsEmail()
   @IsOptional()
+  @Transform(({ value }) => (value === '' ? null : value))
   email?: string;
 
   @IsBoolean()
