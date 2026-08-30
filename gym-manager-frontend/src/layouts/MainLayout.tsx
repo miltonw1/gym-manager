@@ -1,7 +1,7 @@
 import { Outlet, useNavigate, Link } from 'react-router';
 import { useAuthStore } from '@/store/useAuthStore';
 import { Button } from '@/components/ui/button';
-import { LogOut, LayoutGrid, CreditCard } from 'lucide-react';
+import { LogOut, LayoutGrid, CreditCard, BarChart3 } from 'lucide-react';
 import ReadOnlyBanner from '@/components/billing/ReadOnlyBanner';
 import SubscriptionDaysBadge from '@/components/billing/SubscriptionDaysBadge';
 import ThemeToggle from '@/components/theme/ThemeToggle';
@@ -35,6 +35,13 @@ const MainLayout = () => {
               >
                 <LayoutGrid className="h-4 w-4" />
                 Dashboard
+              </Link>
+              <Link 
+                to="/statistics" 
+                className="text-sm font-medium flex items-center gap-1.5 text-muted-foreground hover:text-foreground transition-colors px-2"
+              >
+                <BarChart3 className="h-4 w-4" />
+                Estadísticas
               </Link>
               <Link 
                 to="/plans" 
