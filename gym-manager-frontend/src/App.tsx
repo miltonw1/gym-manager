@@ -6,6 +6,7 @@ import RegisterPage from './pages/RegisterPage';
 import ForgotPasswordPage from './pages/ForgotPasswordPage';
 import ResetPasswordPage from './pages/ResetPasswordPage';
 import DashboardPage from './pages/DashboardPage';
+import StatisticsPage from './pages/StatisticsPage';
 import ExpiringMembersPage from './pages/ExpiringMembersPage';
 import ExpiredMembersPage from './pages/ExpiredMembersPage';
 import PlansPage from './pages/PlansPage';
@@ -25,6 +26,7 @@ function App() {
         <Route element={<MainLayout />}>
           <Route index element={<Navigate to='/dashboard' replace />} />
           <Route path='dashboard' element={<DashboardPage />} />
+          <Route path='statistics' element={<StatisticsPage />} />
           <Route path='dashboard/expiring-members' element={<ExpiringMembersPage />} />
           <Route path='dashboard/expired-members' element={<ExpiredMembersPage />} />
           <Route path='plans' element={<PlansPage />} />

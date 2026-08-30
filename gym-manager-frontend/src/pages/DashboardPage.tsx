@@ -1,10 +1,10 @@
 ﻿import { useEffect, useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { paymentsService } from '@/services/payments.service';
 import { enrollmentsService } from '@/services/enrollments.service';
 import { membersService } from '@/services/members.service';
+import { paymentsService } from '@/services/payments.service';
 import type { MonthlyRevenue } from '@/types/payments.types';
-import { DollarSign, Calendar, AlertTriangle } from 'lucide-react';
+import { DollarSign, Calendar, AlertTriangle, TrendingUp, TrendingDown, Minus } from 'lucide-react';
 import { useNavigate } from 'react-router';
 import MembersTable from '@/components/members/MembersTable';
 import { useAuthStore } from '@/store/useAuthStore';
@@ -46,6 +46,16 @@ const DashboardPage = () => {
     }).format(amount);
   };
 
+  const changePercent = revenue?.changePercent ?? null;
+  const changeLabel =
+    changePercent === null
+      ? 'Sin datos del mes anterior'
+      : changePercent > 0
+        ? `+${changePercent.toFixed(1)}%`
+        : changePercent < 0
+          ? `${changePercent.toFixed(1)}%`
+          : '0%';
+
   return (
     <div className='flex flex-1 flex-col gap-4 p-4 pt-0'>
       <div className='flex items-center justify-between py-4'>
@@ -54,17 +64,44 @@ const DashboardPage = () => {
         </h1>
       </div>
 
-      <div className='grid gap-4 md:grid-cols-2 lg:grid-cols-4'>
+      <div className='grid gap-4 md:grid-cols-2 lg:grid-cols-3'>
         <Card>
           <CardHeader className='flex flex-row items-center justify-between space-y-0 pb-2'>
             <CardTitle className='text-sm font-medium'>Recaudación del Mes</CardTitle>
             <DollarSign className='h-4 w-4 text-muted-foreground' />
           </CardHeader>
           <CardContent>
-            <div className='text-2xl font-bold'>
+            <div className='flex items-center gap-2 text-2xl font-bold'>
               {loading ? '...' : formatCurrency(revenue?.totalRevenue || 0)}
             </div>
-            <p className='text-xs text-muted-foreground'>
+            <div className='mt-1 flex items-center gap-1 text-xs'>
+              {changePercent !== null && !loading && (
+                <>
+                  {changePercent > 0 ? (
+                    <TrendingUp className='h-3.5 w-3.5 text-green-600' />
+                  ) : changePercent < 0 ? (
+                    <TrendingDown className='h-3.5 w-3.5 text-red-600' />
+                  ) : (
+                    <Minus className='h-3.5 w-3.5 text-muted-foreground' />
+                  )}
+                  <span
+                    className={
+                      changePercent > 0
+                        ? 'text-green-600'
+                        : changePercent < 0
+                          ? 'text-red-600'
+                          : 'text-muted-foreground'
+                    }
+                  >
+                    {changeLabel}
+                  </span>
+                  <span className='text-muted-foreground'>
+                    vs {formatCurrency(revenue?.previousMonth.totalRevenue || 0)}
+                  </span>
+                </>
+              )}
+            </div>
+            <p className='mt-1 text-xs text-muted-foreground'>
               {loading ? '' : `${revenue?.transactionCount || 0} transacciones registradas`}
             </p>
           </CardContent>

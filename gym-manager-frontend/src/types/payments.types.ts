@@ -3,6 +3,13 @@ export interface MonthlyRevenue {
   year: number;
   totalRevenue: number;
   transactionCount: number;
+  previousMonth: {
+    month: number;
+    year: number;
+    totalRevenue: number;
+    transactionCount: number;
+  };
+  changePercent: number | null;
   details: Array<{
     id: number;
     amount: string;
@@ -12,6 +19,22 @@ export interface MonthlyRevenue {
     plan: string;
   }>;
 }
+
+export interface RevenueByPlanItem {
+  planName: string;
+  total: number;
+  count: number;
+}
+
+export interface RevenueByPlan {
+  period: 'month' | 'year' | 'all';
+  month?: number;
+  year?: number;
+  totalRevenue: number;
+  items: RevenueByPlanItem[];
+}
+
+export type RevenuePeriod = 'month' | 'year' | 'all';
 
 export interface ExpiringEnrollment {
   id: number;
