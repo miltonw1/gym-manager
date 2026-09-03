@@ -21,6 +21,7 @@ const MainLayout = () => {
         <div className="container flex h-14 items-center">
           <div className="mr-4 flex items-center">
             <Link className="mr-6 flex items-center space-x-2" to="/">
+              <img src="/logo-icon.png" alt="Logo" className="h-8 w-auto object-contain" />
               <span className="font-bold inline-block">Gym Manager</span>
               {gym && (
                 <span className="hidden lg:inline text-sm font-medium text-muted-foreground border rounded-full px-3 py-0.5">
