@@ -35,7 +35,13 @@ async function main() {
   }
 
   // 🔐 Hash password
-  const hashedPassword = await bcrypt.hash("asd123", 10);
+  const adminPassword = process.env.ADMIN_PASSWORD;
+  if (!adminPassword) {
+    throw new Error(
+      "ADMIN_PASSWORD is not set. Set it in the environment before seeding.",
+    );
+  }
+  const hashedPassword = await bcrypt.hash(adminPassword, 10);
 
   // 👑 Crear Admin del sistema (sin gymId)
   const admin = await prisma.user.upsert({
